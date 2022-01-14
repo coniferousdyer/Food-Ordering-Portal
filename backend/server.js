@@ -9,8 +9,7 @@ const app = express();
 
 // Loading enviroment variables
 const port = process.env.PORT || 5000;
-// const uri = process.env.MONGO_URI;
-const uri = "mongodb://127.0.0.1:27017/food_ordering_db";
+const uri = process.env.MONGO_URI;
 
 // Set up middleware
 app.use(cors());
