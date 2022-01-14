@@ -9,22 +9,30 @@ const app = express();
 
 // Loading enviroment variables
 const port = process.env.PORT || 5000;
-const db_name = process.env.DB_NAME;
+// const uri = process.env.MONGO_URI;
+const uri = "mongodb://127.0.0.1:27017/food_ordering_db";
 
 // Set up middleware
 app.use(cors());
 app.use(express.json());
-
-// // Connection to MongoDB
-// mongoose.connect('mongodb://127.0.0.1:27017/' + db_name, { useNewUrlParser: true });
-// const connection = mongoose.connection;
-// connection.once('open', function () {
-//     console.log("MongoDB database connection established successfully!");
-// })
+app.use(express.urlencoded({ extended: true }))
 
 // Setup API endpoints
-app.use("/user", require("./routes/users"));
+app.use("/api/buyers", require("./routes/Buyer"));
+app.use("/api/vendors", require("./routes/Vendor"));
+app.use("/api/items", require("./routes/Item"));
+app.use("/api/orders", require("./routes/Order"));
 
+// Connection to MongoDB
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
+    if (err) {
+        console.log(err);
+    } else {
+        console.log("MongoDB database connection established successfully!");
+    }
+});
+
+// Start the server
 app.listen(port, function () {
-    console.log("Server is running on port " + port + "!");
+    console.log(`Server is running on port ${port}!`);
 });
