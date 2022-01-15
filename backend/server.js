@@ -17,10 +17,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 
 // Setup API endpoints
-app.use("/api/buyers", require("./routes/Buyer"));
-app.use("/api/vendors", require("./routes/Vendor"));
-app.use("/api/items", require("./routes/Item"));
-app.use("/api/orders", require("./routes/Order"));
+app.use("/api/buyers", require("./routes/buyer.route"));
+app.use("/api/vendors", require("./routes/vendor.route"));
+app.use("/api/items", require("./routes/item.route"));
+app.use("/api/orders", require("./routes/order.route"));
 
 // Connection to MongoDB
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, err => {
@@ -35,3 +35,5 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, err =
 app.listen(port, function () {
     console.log(`Server is running on port ${port}!`);
 });
+
+// TODO_BY_ARJUN: Check status codes
