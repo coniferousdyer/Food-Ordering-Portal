@@ -6,7 +6,7 @@ const router = express.Router();
 const Item = require("../models/item.model");
 
 // Get all the items
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
     try {
         const items = await Item.find({});
         return res.status(200).json(items);
@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
 });
 
 // Add an item to the database
-router.post("/add", async (req, res) => {
+router.post("/add", auth, async (req, res) => {
     try {
         // Verify if the item doesn't already exist
         const item = await Item.findOne({ name: req.body.name });
@@ -54,7 +54,7 @@ router.post("/add", async (req, res) => {
 });
 
 // Remove an item from the database
-router.post("/remove", async (req, res) => {
+router.post("/remove", auth, async (req, res) => {
     try {
         const deleted_item = await Item.findOneAndDelete({ name: req.body.name });
         return res.status(200).json(deleted_item);

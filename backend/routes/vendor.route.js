@@ -1,22 +1,12 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-// Load Vendor model
+// Load Vendor model and auth middleware
 const Vendor = require("../models/vendor.model");
-
-// Get all the vendors
-router.get("/", async (req, res) => {
-    try {
-        const vendors = await Vendor.find({});
-        return res.status(200).json(vendors);
-    } catch (err) {
-        return res.status(500).json({
-            error: err
-        });
-    }
-});
+const auth = require("../middleware/auth");
 
 // Add a vendor to the database
 router.post("/register", async (req, res) => {
@@ -75,7 +65,55 @@ router.post("/login", async (req, res) => {
             });
         }
 
-        // Return the vendor
+        // Create and assign a token
+        jwt.sign({
+            id: vendor._id,
+            shop_name: vendor.shop_name,
+            manager_name: vendor.manager_name,
+            email: vendor.email,
+        }, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_EXPIRES_IN
+        }, (err, token) => {
+            if (err) {
+                return res.status(500).json({
+                    error: "Error signing token",
+                });
+            }
+
+            // Return the token and the vendor data
+            return res.status(200).json({
+                token,
+                vendor: {
+                    shop_name: vendor.shop_name,
+                    manager_name: vendor.manager_name,
+                    email: vendor.email,
+                    number: vendor.number,
+                    opening_time: vendor.opening_time,
+                    closing_time: vendor.closing_time,
+                }
+            });
+        });
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
+// Edit a vendor's information
+router.patch("/edit", auth, async (req, res) => {
+    try {
+        const vendor = await Vendor.findOneAndUpdate(req.user, {
+            $set: {
+                shop_name: req.body.shop_name,
+                manager_name: req.body.manager_name,
+                email: req.body.email,
+                number: req.body.number,
+                opening_time: req.body.opening_time,
+                closing_time: req.body.closing_time,
+            }
+        })
+
         return res.status(200).json(vendor);
     } catch (err) {
         return res.status(500).json({

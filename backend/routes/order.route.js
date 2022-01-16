@@ -6,7 +6,7 @@ const router = express.Router();
 const Order = require("../models/order.model");
 
 // Get all the orders
-router.get("/", async (req, res) => {
+router.get("/", auth, async (req, res) => {
     try {
         const orders = await Order.find({});
         return res.status(200).json(orders);
@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
 });
 
 // Add a order to the database
-router.post("/add", async (req, res) => {
+router.post("/add", auth, async (req, res) => {
     try {
         // Create a new order
         const new_order = new Order({

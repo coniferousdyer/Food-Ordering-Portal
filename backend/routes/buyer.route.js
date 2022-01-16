@@ -1,22 +1,12 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-// Load Buyer model
+// Load Buyer model and auth middleware
 const Buyer = require("../models/buyer.model");
-
-// Get all the buyers
-router.get("/", async (req, res) => {
-    try {
-        const buyers = await Buyer.find({});
-        return res.status(200).json(buyers);
-    } catch (err) {
-        return res.status(500).json({
-            error: err
-        });
-    }
-});
+const auth = require('../middleware/auth');
 
 // Add a buyer to the database
 router.post("/register", async (req, res) => {
@@ -39,7 +29,7 @@ router.post("/register", async (req, res) => {
         });
 
         // Hash the password
-        const salt = await bcrypt.genSalt(10);
+        const salt = await bcrypt.genSalt();
         new_buyer.password = await bcrypt.hash(req.body.password, salt);
 
         // Save the user
@@ -74,7 +64,52 @@ router.post("/login", async (req, res) => {
             });
         }
 
-        // Return the buyer
+        // Create and assign a token
+        jwt.sign({
+            id: buyer._id,
+            name: buyer.name,
+            email: buyer.email,
+        }, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_EXPIRES_IN
+        }, (err, token) => {
+            if (err) {
+                return res.status(500).json({
+                    error: "Error signing token",
+                });
+            }
+
+            // Return the token and the buyer data
+            return res.status(200).json({
+                token,
+                buyer: {
+                    name: buyer.name,
+                    email: buyer.email,
+                    number: buyer.number,
+                    age: buyer.age,
+                    batch: buyer.batch,
+                }
+            });
+        });
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
+// Edit a buyer's information
+router.patch("/edit", auth, async (req, res) => {
+    try {
+        const buyer = await Buyer.findOneAndUpdate(req.user, {
+            $set: {
+                name: req.body.name,
+                email: req.body.email,
+                number: req.body.number,
+                age: req.body.age,
+                batch: req.body.batch,
+            }
+        })
+
         return res.status(200).json(buyer);
     } catch (err) {
         return res.status(500).json({
