@@ -30,7 +30,11 @@ const BuyerSchema = new mongoose.Schema({
 	wallet: {
 		type: Number,
 		default: 0
-	}
+	},
+	favourite_items: [{
+		type: mongoose.Schema.Types.ObjectId,
+		ref: "Item"
+	}]
 });
 
 const Buyer = mongoose.model("Buyer", BuyerSchema);

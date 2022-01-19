@@ -5,10 +5,13 @@ const ItemSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        unique: true
     },
     image: {
         type: String
+    },
+    vendor_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Vendor"
     },
     price: {
         type: Number,
@@ -23,20 +26,36 @@ const ItemSchema = new mongoose.Schema({
         required: true
     },
     rating: {
-        type: Number,
-        default: 0
+        ratings: [{
+            type: Number,
+            required: true
+        }],
+        count: {
+            type: Number,
+            default: 0
+        }
     },
     vegetarian: {
         type: Boolean,
         required: true
     },
-    addons: {
-        type: Array,
+    addons: [{
+        addon_name: {
+            type: String,
+            required: true
+        },
+        addon_price: {
+            type: Number,
+            required: true
+        }
+    }],
+    tags: {
+        type: [String],
         default: []
     },
-    tags: {
-        type: Array,
-        default: []
+    number_sold: {
+        type: Number,
+        default: 0
     }
 });
 

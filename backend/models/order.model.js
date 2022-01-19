@@ -3,23 +3,26 @@ const mongoose = require("mongoose");
 // Create schema
 const OrderSchema = new mongoose.Schema({
     buyer_id: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Buyer",
         required: true
     },
     vendor_id: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Vendor",
         required: true
     },
     placed_time: {
         type: Date,
         default: Date.now
     },
-    status: {
+    state: {
         type: String,
         default: "PLACED"
     },
-    item_name: {
-        type: String,
+    item_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Item",
         required: true
     },
     cost: {
@@ -29,10 +32,6 @@ const OrderSchema = new mongoose.Schema({
     quantity: {
         type: Number,
         required: true
-    },
-    rating: {
-        type: Number,
-        default: 0
     }
 });
 

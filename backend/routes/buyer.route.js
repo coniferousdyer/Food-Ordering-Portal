@@ -4,9 +4,21 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-// Load Buyer model and auth middleware
+// Load models and auth middleware
 const Buyer = require("../models/buyer.model");
 const auth = require('../middleware/auth');
+
+// Get a particular buyer
+router.get("/details", auth, async (req, res) => {
+    try {
+        const buyer = await Buyer.findById(req.user);
+        return res.status(200).json(buyer);
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
 
 // Add a buyer to the database
 router.post("/register", async (req, res) => {
@@ -34,7 +46,7 @@ router.post("/register", async (req, res) => {
 
         // Save the user
         const saved_buyer = await new_buyer.save();
-        return res.status(200).json(saved_buyer);
+        return res.status(201).json(saved_buyer);
     } catch (err) {
         return res.status(500).json({
             error: err
@@ -100,7 +112,7 @@ router.post("/login", async (req, res) => {
 // Edit a buyer's information
 router.patch("/edit", auth, async (req, res) => {
     try {
-        const buyer = await Buyer.findOneAndUpdate(req.user, {
+        const buyer = await Buyer.findByIdAndUpdate(req.user, {
             $set: {
                 name: req.body.name,
                 email: req.body.email,
@@ -108,8 +120,65 @@ router.patch("/edit", auth, async (req, res) => {
                 age: req.body.age,
                 batch: req.body.batch,
             }
+        }, {
+            new: true
         })
 
+        return res.status(200).json(buyer);
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
+// Update a buyer's wallet
+router.patch("/update_wallet", auth, async (req, res) => {
+    try {
+        const buyer = await Buyer.findById(req.user);
+        const new_wallet_amount = buyer.wallet + req.body.wallet;
+
+        // Update the buyer's wallet
+        const updated_buyer = await Buyer.findByIdAndUpdate(req.user, {
+            $set: {
+                wallet: new_wallet_amount,
+            }
+        }, {
+            new: true
+        })
+
+        return res.status(200).json(updated_buyer);
+    } catch (err) {
+        console.log(err);
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
+// Add to a buyer's favourite list
+router.patch("/add_favourite", auth, async (req, res) => {
+    try {
+        const buyer = await Buyer.findByIdAndUpdate(req.user, {
+            $push: {
+                favourite_items: req.body.item_id,
+            }
+        }, {
+            new: true
+        })
+
+        return res.status(200).json(buyer);
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
+// Delete a buyer
+router.delete("/delete", auth, async (req, res) => {
+    try {
+        const buyer = await Buyer.findByIdAndDelete(req.user);
         return res.status(200).json(buyer);
     } catch (err) {
         return res.status(500).json({

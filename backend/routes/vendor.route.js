@@ -4,9 +4,21 @@ const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
-// Load Vendor model and auth middleware
+// Load models and auth middleware
 const Vendor = require("../models/vendor.model");
 const auth = require("../middleware/auth");
+
+// Get a particular vendor
+router.get("/details", auth, async (req, res) => {
+    try {
+        const vendor = await Vendor.findById(req.user);
+        return res.status(200).json(vendor);
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
 
 // Add a vendor to the database
 router.post("/register", async (req, res) => {
@@ -31,11 +43,11 @@ router.post("/register", async (req, res) => {
 
         // Hash the password
         const salt = await bcrypt.genSalt();
-        new_buyer.password = await bcrypt.hash(req.body.password, salt);
+        new_vendor.password = await bcrypt.hash(req.body.password, salt);
 
         // Save the vendor
         const saved_vendor = await new_vendor.save();
-        return res.status(200).json(saved_vendor);
+        return res.status(201).json(saved_vendor);
     } catch (err) {
         return res.status(500).json({
             error: err
@@ -112,8 +124,22 @@ router.patch("/edit", auth, async (req, res) => {
                 opening_time: req.body.opening_time,
                 closing_time: req.body.closing_time,
             }
-        })
+        }, {
+            new: true
+        });
 
+        return res.status(200).json(vendor);
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
+// Delete a vendor
+router.delete("/delete", auth, async (req, res) => {
+    try {
+        const vendor = await Vendor.findByIdAndDelete(req.user);
         return res.status(200).json(vendor);
     } catch (err) {
         return res.status(500).json({

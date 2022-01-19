@@ -2,8 +2,9 @@ const express = require("express");
 
 const router = express.Router();
 
-// Load Item model
+// Load models and auth middleware
 const Item = require("../models/item.model");
+const auth = require("../middleware/auth");
 
 // Get all the items
 router.get("/", auth, async (req, res) => {
@@ -17,14 +18,32 @@ router.get("/", auth, async (req, res) => {
     }
 });
 
+// Get all the items for a specific vendor
+router.get("/vendor", auth, async (req, res) => {
+    try {
+        const items = await Item.find({
+            vendor_id: req.query.vendor_id
+        });
+        return res.status(200).json(items);
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
 // Add an item to the database
 router.post("/add", auth, async (req, res) => {
     try {
-        // Verify if the item doesn't already exist
-        const item = await Item.findOne({ name: req.body.name });
+        // Verify that the vendor hasn't already added an item with the same name
+        const item = await Item.findOne({
+            vendor_id: req.user,
+            name: req.body.name
+        });
+
         if (item) {
             return res.status(409).json({
-                error: "Item already exists",
+                error: "Item has already been added by this vendor",
             });
         }
 
@@ -32,12 +51,10 @@ router.post("/add", auth, async (req, res) => {
         const new_item = new Item({
             name: req.body.name,
             image: req.body.image,
+            vendor_id: req.user,
             price: req.body.price,
             description: req.body.description,
             category: req.body.category,
-
-            // TODO_BY_ARJUN: Modify this
-            rating: req.body.rating,
             vegetarian: req.body.vegetarian,
             addons: req.body.addons,
             tags: req.body.tags,
@@ -45,7 +62,38 @@ router.post("/add", auth, async (req, res) => {
 
         // Save the item
         const saved_item = await new_item.save();
-        return res.status(200).json(saved_item);
+        return res.status(201).json(saved_item);
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
+router.patch("/edit", auth, async (req, res) => {
+    try {
+        const item = await Item.findOneAndUpdate({
+            vendor_id: req.user,
+            name: req.body.name
+        }, {
+            $set: {
+                name: req.body.name,
+                image: req.body.image,
+                vendor_id: req.user,
+                price: req.body.price,
+                description: req.body.description,
+                category: req.body.category,
+                vegetarian: req.body.vegetarian,
+                addons: req.body.addons,
+                tags: req.body.tags,
+                rating: { ratings: [], count: 0 },
+                number_sold: 0
+            }
+        }, {
+            new: true
+        });
+
+        return res.status(200).json(item);
     } catch (err) {
         return res.status(500).json({
             error: err
@@ -54,10 +102,34 @@ router.post("/add", auth, async (req, res) => {
 });
 
 // Remove an item from the database
-router.post("/remove", auth, async (req, res) => {
+router.delete("/delete", auth, async (req, res) => {
     try {
-        const deleted_item = await Item.findOneAndDelete({ name: req.body.name });
-        return res.status(200).json(deleted_item);
+        const item = await Item.findByIdAndDelete(req.body.item_id);
+        return res.status(200).json(item);
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
+// Updating the rating of the item
+router.patch("/update_rating", auth, async (req, res) => {
+    try {
+        const item = await Item.findByIdAndDelete(req.body.item_id);
+
+        item.rating.ratings.push(req.body.rating);
+        item.rating.count++;
+
+        const updated_item = await findByIdAndUpdate(req.body.item_id, {
+            $set: {
+                rating: item.rating
+            }
+        }, {
+            new: true
+        });
+
+        return res.status(200).json(saved_item);
     } catch (err) {
         return res.status(500).json({
             error: err
