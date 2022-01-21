@@ -60,6 +60,7 @@ router.post("/add", auth, async (req, res) => {
         });
 
         // TODO_BY_ARJUN: CHECK IF TIMINGS ARE VALID
+        // TODO_BY_ARJUN: CHECK FOR UNIQUE NAMES AND EMAILS AND STUFF
 
         // Find price of the item
         const item = await Item.findById(req.body.item_id);

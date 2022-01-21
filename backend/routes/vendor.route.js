@@ -8,6 +8,18 @@ const router = express.Router();
 const Vendor = require("../models/vendor.model");
 const auth = require("../middleware/auth");
 
+// Get all vendors
+router.get("/", auth, async (req, res) => {
+    try {
+        const vendors = await Vendor.find({});
+        return res.status(200).json(vendors);
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
 // Get a particular vendor
 router.get("/details", auth, async (req, res) => {
     try {
@@ -45,10 +57,28 @@ router.post("/register", async (req, res) => {
         const salt = await bcrypt.genSalt();
         new_vendor.password = await bcrypt.hash(req.body.password, salt);
 
-        // Save the vendor
-        const saved_vendor = await new_vendor.save();
-        return res.status(201).json(saved_vendor);
+        // Create and assign a token
+        jwt.sign({
+            id: new_vendor._id,
+            type: "vendor",
+        }, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_EXPIRES_IN
+        }, async (err, token) => {
+            if (err) {
+                return res.status(500).json({
+                    error: "Error signing token",
+                });
+            }
+
+            // Return the token and the vendor data
+            const saved_vendor = await new_vendor.save();
+            return res.status(201).json({
+                token: token,
+                vendor: saved_vendor
+            });
+        });
     } catch (err) {
+        console.log(err);
         return res.status(500).json({
             error: err
         });
@@ -80,9 +110,7 @@ router.post("/login", async (req, res) => {
         // Create and assign a token
         jwt.sign({
             id: vendor._id,
-            shop_name: vendor.shop_name,
-            manager_name: vendor.manager_name,
-            email: vendor.email,
+            type: "vendor",
         }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRES_IN
         }, (err, token) => {
@@ -115,11 +143,15 @@ router.post("/login", async (req, res) => {
 // Edit a vendor's information
 router.patch("/edit", auth, async (req, res) => {
     try {
+        // TODO_BY_ARJUN: CHECK IF EMAIL ALREADY EXISTS
+        // TODO_BY_ARJUN: ENCRYPT PASSWORD ON UPDATION
+
         const vendor = await Vendor.findOneAndUpdate(req.user, {
             $set: {
                 shop_name: req.body.shop_name,
                 manager_name: req.body.manager_name,
                 email: req.body.email,
+                password: req.body.password,
                 number: req.body.number,
                 opening_time: req.body.opening_time,
                 closing_time: req.body.closing_time,

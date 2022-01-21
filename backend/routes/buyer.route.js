@@ -22,6 +22,7 @@ router.get("/details", auth, async (req, res) => {
 
 // Add a buyer to the database
 router.post("/register", async (req, res) => {
+    // TODO_BY_ARJUN: CHECK FOR ALL UNIQUENESS
     try {
         // Verify if the user doesn't already exist
         const buyer = await Buyer.findOne({ email: req.body.email })
@@ -44,9 +45,26 @@ router.post("/register", async (req, res) => {
         const salt = await bcrypt.genSalt();
         new_buyer.password = await bcrypt.hash(req.body.password, salt);
 
-        // Save the user
-        const saved_buyer = await new_buyer.save();
-        return res.status(201).json(saved_buyer);
+        // Create and assign a token
+        jwt.sign({
+            id: new_buyer._id,
+            type: "buyer",
+        }, process.env.JWT_SECRET, {
+            expiresIn: process.env.JWT_EXPIRES_IN
+        }, async (err, token) => {
+            if (err) {
+                return res.status(500).json({
+                    error: "Error signing token",
+                });
+            }
+
+            // Return the token and the buyer data
+            const saved_buyer = await new_buyer.save();
+            return res.status(201).json({
+                token: token,
+                buyer: saved_buyer
+            });
+        });
     } catch (err) {
         return res.status(500).json({
             error: err
@@ -79,8 +97,7 @@ router.post("/login", async (req, res) => {
         // Create and assign a token
         jwt.sign({
             id: buyer._id,
-            name: buyer.name,
-            email: buyer.email,
+            type: "buyer",
         }, process.env.JWT_SECRET, {
             expiresIn: process.env.JWT_EXPIRES_IN
         }, (err, token) => {
@@ -112,10 +129,14 @@ router.post("/login", async (req, res) => {
 // Edit a buyer's information
 router.patch("/edit", auth, async (req, res) => {
     try {
+        // TODO_BY_ARJUN: CHECK IF EMAIL ALREADY EXISTS
+        // TODO_BY_ARJUN: ENCRYPT PASSWORD ON UPDATION
+
         const buyer = await Buyer.findByIdAndUpdate(req.user, {
             $set: {
                 name: req.body.name,
                 email: req.body.email,
+                password: req.body.password,
                 number: req.body.number,
                 age: req.body.age,
                 batch: req.body.batch,

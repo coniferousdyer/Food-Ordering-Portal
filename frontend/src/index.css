@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -10,4 +12,71 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.welcome-page {
+  height: 70vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-heading {
+  margin-bottom: 2rem !important;
+}
+
+.registration-heading {
+  margin-top: 12rem !important;
+  margin-bottom: 3rem !important;
+}
+
+.react-tel-input {
+  font-family: 'Roboto', sans-serif !important;
+}
+
+.react-tel-input input {
+  font-family: 'Roboto', sans-serif !important;
+  font-size: 1rem !important;
+  padding: 1.7rem !important;
+  padding-left: 3.5rem !important;
+}
+
+.submit-button {
+  margin-top: 2rem !important;
+  margin-left: 2rem !important;
+  margin-bottom: 2rem !important;
+}
+
+.item-grid {
+  margin-top: 5rem !important;
+}
+
+.dashboard-heading {
+  margin-top: 12rem !important;
+  margin-bottom: 2rem !important;
+}
+
+@media only screen and (max-width: 600px) {
+  .welcome-page {
+    height: 80vh;
+  }
+
+  .registration-heading {
+    margin-top: 12rem !important;
+    margin-bottom: 2rem !important;
+  }
+
+  .react-tel-input input {
+    width: 95% !important;
+  }  
+
+  .item-grid {
+    margin-top: 3rem !important;
+  }
+
+  .dashboard-heading {
+    margin-top: 12rem !important;
+    margin-bottom: 2rem !important;
+  }
 }

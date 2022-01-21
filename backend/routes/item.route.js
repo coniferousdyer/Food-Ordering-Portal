@@ -1,12 +1,15 @@
 const express = require("express");
-
-const router = express.Router();
+const fs = require("fs");
+const path = require("path");
 
 // Load models and auth middleware
 const Item = require("../models/item.model");
 const auth = require("../middleware/auth");
+const upload = require("../middleware/multer");
 
-// Get all the items
+const router = express.Router();
+
+// Get all items
 router.get("/", auth, async (req, res) => {
     try {
         const items = await Item.find({});
@@ -33,7 +36,7 @@ router.get("/vendor", auth, async (req, res) => {
 });
 
 // Add an item to the database
-router.post("/add", auth, async (req, res) => {
+router.post("/add", auth, upload.single('image'), async (req, res, next) => {
     try {
         // Verify that the vendor hasn't already added an item with the same name
         const item = await Item.findOne({
@@ -50,12 +53,13 @@ router.post("/add", auth, async (req, res) => {
         // Create a new item
         const new_item = new Item({
             name: req.body.name,
-            image: req.body.image,
+            image: {
+                data: fs.readFile(path.join(__dirname + '/uploads/' + req.file.filename), () => {}),
+                contentType: "image/png"
+            },
             vendor_id: req.user,
             price: req.body.price,
-            description: req.body.description,
             category: req.body.category,
-            vegetarian: req.body.vegetarian,
             addons: req.body.addons,
             tags: req.body.tags,
         });
@@ -81,9 +85,7 @@ router.patch("/edit", auth, async (req, res) => {
                 image: req.body.image,
                 vendor_id: req.user,
                 price: req.body.price,
-                description: req.body.description,
                 category: req.body.category,
-                vegetarian: req.body.vegetarian,
                 addons: req.body.addons,
                 tags: req.body.tags,
                 rating: { ratings: [], count: 0 },

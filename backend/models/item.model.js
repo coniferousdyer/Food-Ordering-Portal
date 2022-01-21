@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const multer = require("multer");
 
 // Create schema
 const ItemSchema = new mongoose.Schema({
@@ -7,7 +8,8 @@ const ItemSchema = new mongoose.Schema({
         required: true,
     },
     image: {
-        type: String
+        data: Buffer,
+        contentType: String
     },
     vendor_id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -15,10 +17,6 @@ const ItemSchema = new mongoose.Schema({
     },
     price: {
         type: Number,
-        required: true
-    },
-    description: {
-        type: String,
         required: true
     },
     category: {
@@ -34,10 +32,6 @@ const ItemSchema = new mongoose.Schema({
             type: Number,
             default: 0
         }
-    },
-    vegetarian: {
-        type: Boolean,
-        required: true
     },
     addons: [{
         addon_name: {

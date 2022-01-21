@@ -4,12 +4,12 @@ const mongoose = require("mongoose");
 const VendorSchema = new mongoose.Schema({
     shop_name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     manager_name: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     email: {
         type: String,
