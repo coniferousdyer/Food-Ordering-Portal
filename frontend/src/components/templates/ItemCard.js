@@ -1,38 +1,28 @@
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Rating from '@mui/material/Rating';
 import Chip from '@mui/material/Chip';
-import { Grid } from '@mui/material';
+import Grid from '@mui/material/Grid';
+import ItemBuy from './ItemBuy';
+import ItemChange from './ItemChange';
 
 
-const ItemCard = ({ item, vendor }) => {
-    // Calculate the average rating for the item
-    const computeRating = () => {
-        let sum = 0;
-        for (let i = 0; i < item.rating.count; i++) {
-            sum += item.rating.ratings[i];
-        }
-        return (sum / item.rating.count);
-    }
-
+const ItemCard = ({ item, vendor, computeRating, onEdit, onDelete }) => {
     return (
         <Card>
-            <CardMedia
-                component="img"
-                image={`data:image/png;base64,${item.image}`}
-                height="140"
-                alt={item.name}
-            />
             <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
+                <Typography gutterBottom variant="h5" component="h2" style={{ marginTop: "1.5rem" }}>
                     {item.name}
                 </Typography>
-                <Rating name="read-only" value={computeRating()} readOnly />
-                <Typography variant="body2" color="textSecondary" component="p">
-                    {vendor.shop_name}
-                </Typography>
+                <Rating name="read-only" value={computeRating(item)} readOnly />
+                {vendor !== "" ?
+                    <Typography variant="body2" color="textSecondary" component="p">
+                        {vendor.shop_name}
+                    </Typography>
+                    :
+                    null
+                }
                 <Typography variant="body2" color="textSecondary" component="p">
                     {`Price: Rs. ${item.price}`}
                 </Typography>
@@ -40,19 +30,33 @@ const ItemCard = ({ item, vendor }) => {
                     {`Category: ${item.category}`}
                 </Typography>
                 {item.tags.length > 0 &&
-                    <Grid
-                        direction="row"
-                        justifyContent="center"
-                        container
-                        spacing={1}
-                        marginTop={3}
-                    >
-                        {item.tags.map((tag, index) => (
-                            <Grid item>
-                                <Chip key={index} label={tag} color="primary" variant="outlined" />
-                            </Grid>
-                        ))}
-                    </Grid>
+                    <div>
+                        <Grid
+                            direction="row"
+                            justifyContent="center"
+                            container
+                            spacing={1}
+                            marginTop={3}
+                        >
+                            {item.tags.map((tag, index) => (
+                                <Grid item key={index}>
+                                    <Chip key={index} label={tag} color="primary" variant="outlined" />
+                                </Grid>
+                            ))}
+                        </Grid>
+                        {vendor !== "" ?
+                            <ItemBuy
+                                item={item}
+                                vendor={vendor}
+                            />
+                            :
+                            <ItemChange
+                                item={item}
+                                onDelete={onDelete}
+                                onEdit={onEdit}
+                            />
+                        }
+                    </div>
                 }
             </CardContent>
         </Card>

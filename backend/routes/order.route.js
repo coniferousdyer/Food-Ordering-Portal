@@ -57,6 +57,8 @@ router.post("/add", auth, async (req, res) => {
             vendor_id: req.body.vendor_id,
             item_id: req.body.item_id,
             quantity: req.body.quantity,
+            addons: req.body.addons,
+            cost: req.body.cost,
         });
 
         // TODO_BY_ARJUN: CHECK IF TIMINGS ARE VALID
@@ -70,21 +72,18 @@ router.post("/add", auth, async (req, res) => {
                 error: "Item not found",
             });
         }
-
-        const cost = req.body.quantity * item.price;
-
+        
         // Deduct the amount from the buyer's wallet
         const buyer = await Buyer.findById(req.user);
-        if (buyer.wallet < cost) {
+        if (buyer.wallet < req.body.cost) {
             return res.status(403).json({
                 error: "Insufficient funds in the buyer's wallet"
             });
         }
-        const new_wallet_amount = buyer.wallet - cost;
+        const new_wallet_amount = buyer.wallet - req.body.cost;
         const new_number_sold = item.number_sold + req.body.quantity;
 
         // Save the order
-        new_order.cost = cost;
         const saved_order = await new_order.save();
 
         // Save the buyer
@@ -130,6 +129,17 @@ router.patch("/reject", auth, async (req, res) => {
             new: true
         });
 
+        // Refund the buyer's wallet
+        const buyer = await Buyer.findById(req.user);
+        const new_wallet_amount = buyer.wallet + order.cost;
+        const updated_buyer = await Buyer.findByIdAndUpdate(req.user, {
+            $set: {
+                wallet: new_wallet_amount
+            }
+        }, {
+            new: true
+        });
+
         // Decrement number of sales of the item
         const item = await Item.findByIdAndUpdate(order.item_id, {
             $dec: {
@@ -141,6 +151,7 @@ router.patch("/reject", auth, async (req, res) => {
 
         return res.status(200).json({
             order: order,
+            buyer: updated_buyer,
             item: item
         });
     } catch (err) {

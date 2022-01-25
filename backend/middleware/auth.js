@@ -19,6 +19,12 @@ const auth = (req, res, next) => {
         req.user = decoded.id;
         next();
     } catch (err) {
+        if (err.name === 'TokenExpiredError') {
+            return res.status(401).json({
+                error: "Token expired, authorization denied",
+            });
+        }
+        
         res.status(500).json({
             error: err
         });

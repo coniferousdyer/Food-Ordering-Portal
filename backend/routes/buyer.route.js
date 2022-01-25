@@ -62,6 +62,7 @@ router.post("/register", async (req, res) => {
             const saved_buyer = await new_buyer.save();
             return res.status(201).json({
                 token: token,
+                type: "buyer",
                 buyer: saved_buyer
             });
         });
@@ -109,7 +110,8 @@ router.post("/login", async (req, res) => {
 
             // Return the token and the buyer data
             return res.status(200).json({
-                token,
+                token: token,
+                type: "buyer",
                 buyer: {
                     name: buyer.name,
                     email: buyer.email,
@@ -129,24 +131,37 @@ router.post("/login", async (req, res) => {
 // Edit a buyer's information
 router.patch("/edit", auth, async (req, res) => {
     try {
-        // TODO_BY_ARJUN: CHECK IF EMAIL ALREADY EXISTS
-        // TODO_BY_ARJUN: ENCRYPT PASSWORD ON UPDATION
+        // Find user with same email
+        let buyer = await Buyer.findOne({ email: req.body.email });
+        if (buyer && buyer._id != req.user) {
+            return res.status(409).json({
+                error: "Email already exists",
+            });
+        }
 
-        const buyer = await Buyer.findByIdAndUpdate(req.user, {
-            $set: {
-                name: req.body.name,
-                email: req.body.email,
-                password: req.body.password,
-                number: req.body.number,
-                age: req.body.age,
-                batch: req.body.batch,
-            }
-        }, {
+        if (!buyer)
+            buyer = await Buyer.findById(req.user);
+
+        buyer.email = req.body.email;
+        buyer.name = req.body.name;
+        buyer.number = req.body.number;
+        buyer.age = req.body.age;
+        buyer.batch = req.body.batch;
+
+        // Hash the password
+        if (req.body.password !== "") {
+            const salt = await bcrypt.genSalt();
+            buyer.password = await bcrypt.hash(req.body.password, salt);
+        }
+
+
+        const saved_buyer = await Buyer.findByIdAndUpdate(req.user, buyer, {
             new: true
-        })
+        });
 
-        return res.status(200).json(buyer);
+        return res.status(200).json(saved_buyer);
     } catch (err) {
+        console.log(err);
         return res.status(500).json({
             error: err
         });
@@ -157,7 +172,7 @@ router.patch("/edit", auth, async (req, res) => {
 router.patch("/update_wallet", auth, async (req, res) => {
     try {
         const buyer = await Buyer.findById(req.user);
-        const new_wallet_amount = buyer.wallet + req.body.wallet;
+        const new_wallet_amount = buyer.wallet + Number(req.body.wallet);
 
         // Update the buyer's wallet
         const updated_buyer = await Buyer.findByIdAndUpdate(req.user, {

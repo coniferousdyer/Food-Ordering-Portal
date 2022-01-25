@@ -11,8 +11,8 @@ const AgeInput = ({ userDetails, setObjectValue, errorDetails, setErrorValue }) 
     const handleNumberChange = event => {
         setAge(event.target.value);
         setObjectValue({ ...userDetails, age: event.target.value });
-        setError(validator.isEmpty(event.target.value) && !validator.isNumeric(event.target.value));
-        setErrorValue({ ...errorDetails, age: validator.isEmpty(event.target.value) && !validator.isNumeric(event.target.value) });
+        setError(validator.isEmpty(event.target.value) || !validator.isNumeric(event.target.value) || event.target.value < 0);
+        setErrorValue({ ...errorDetails, age: validator.isEmpty(event.target.value) || !validator.isNumeric(event.target.value) || event.target.value < 0 });
     }
 
     return (
@@ -21,7 +21,7 @@ const AgeInput = ({ userDetails, setObjectValue, errorDetails, setErrorValue }) 
                 <TextField
                     id="outlined-basic"
                     error
-                    helperText='Please enter a valid number'
+                    helperText='Please enter a valid age'
                     label="Age"
                     variant="outlined"
                     value={age}

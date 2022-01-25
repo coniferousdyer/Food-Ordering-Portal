@@ -6,6 +6,8 @@ import Home from './components/webpages/General/Home';
 import Register from './components/webpages/General/Register';
 import Login from './components/webpages/General/Login';
 import BuyerDashboard from "./components/webpages/Buyer/BuyerDashboard";
+import VendorDashboard from "./components/webpages/Vendor/VendorDashboard";
+import BuyerProfile from "./components/webpages/Buyer/BuyerProfile";
 
 
 function App() {
@@ -14,7 +16,7 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/" element={<BuyerDashboard />} />
+          <Route path="/" element={<Home />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<div>404</div>} />

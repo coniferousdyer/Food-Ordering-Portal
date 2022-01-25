@@ -5,7 +5,6 @@ const path = require("path");
 // Load models and auth middleware
 const Item = require("../models/item.model");
 const auth = require("../middleware/auth");
-const upload = require("../middleware/multer");
 
 const router = express.Router();
 
@@ -25,7 +24,7 @@ router.get("/", auth, async (req, res) => {
 router.get("/vendor", auth, async (req, res) => {
     try {
         const items = await Item.find({
-            vendor_id: req.query.vendor_id
+            vendor_id: req.user
         });
         return res.status(200).json(items);
     } catch (err) {
@@ -36,7 +35,7 @@ router.get("/vendor", auth, async (req, res) => {
 });
 
 // Add an item to the database
-router.post("/add", auth, upload.single('image'), async (req, res, next) => {
+router.post("/add", auth, async (req, res, next) => {
     try {
         // Verify that the vendor hasn't already added an item with the same name
         const item = await Item.findOne({
@@ -53,10 +52,6 @@ router.post("/add", auth, upload.single('image'), async (req, res, next) => {
         // Create a new item
         const new_item = new Item({
             name: req.body.name,
-            image: {
-                data: fs.readFile(path.join(__dirname + '/uploads/' + req.file.filename), () => {}),
-                contentType: "image/png"
-            },
             vendor_id: req.user,
             price: req.body.price,
             category: req.body.category,
@@ -76,26 +71,29 @@ router.post("/add", auth, upload.single('image'), async (req, res, next) => {
 
 router.patch("/edit", auth, async (req, res) => {
     try {
-        const item = await Item.findOneAndUpdate({
+        // CHECK IF ADDING DUPLICATES
+        const item = await Item.findOne({
             vendor_id: req.user,
-            name: req.body.name
-        }, {
-            $set: {
-                name: req.body.name,
-                image: req.body.image,
-                vendor_id: req.user,
-                price: req.body.price,
-                category: req.body.category,
-                addons: req.body.addons,
-                tags: req.body.tags,
-                rating: { ratings: [], count: 0 },
-                number_sold: 0
-            }
-        }, {
+            name: req.body.original_name
+        });
+
+        if (!item) {
+            return res.status(404).json({
+                error: "Item not found",
+            });
+        }
+
+        item.name = req.body.name;
+        item.price = req.body.price;
+        item.category = req.body.category;
+        item.addons = req.body.addons;
+        item.tags = req.body.tags;
+
+        const saved_item = await Item.findByIdAndUpdate(item._id, item, {
             new: true
         });
 
-        return res.status(200).json(item);
+        return res.status(200).json(saved_item);
     } catch (err) {
         return res.status(500).json({
             error: err
@@ -106,6 +104,7 @@ router.patch("/edit", auth, async (req, res) => {
 // Remove an item from the database
 router.delete("/delete", auth, async (req, res) => {
     try {
+        // TODO_BY_ARJUN: DELETE FROM FAVOURITES AS WELL
         const item = await Item.findByIdAndDelete(req.body.item_id);
         return res.status(200).json(item);
     } catch (err) {

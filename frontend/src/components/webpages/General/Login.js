@@ -27,44 +27,19 @@ const Login = () => {
     // Handle user type change
     const handleUserTypeChange = event => {
         setUserType(event.target.value);
-
-        // Reset user details
-        setUserDetails({
-            email: '',
-            password: '',
-        });
-
-        // Reset error
-        setError({
-            email: false,
-            password: false,
-        });
     }
 
     // Validate user details
     const validateUserDetails = () => {
-        if (userType === 'buyer') {
-            if (userDetails.email === '' || userDetails.password === '' || error.email || error.password) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Please fill all the details and/or fix errors!!',
-                    icon: 'error',
-                    confirmButtonText: 'Ok'
-                });
+        if (userDetails.email === '' || userDetails.password === '' || error.email || error.password) {
+            Swal.fire({
+                title: 'Error',
+                text: 'Please fill all the details and/or fix errors!!',
+                icon: 'error',
+                confirmButtonText: 'Ok'
+            });
 
-                return false;
-            }
-        } else {
-            if (userDetails.email === '' || userDetails.password === '' || error.email || error.password) {
-                Swal.fire({
-                    title: 'Error',
-                    text: 'Please fill all the details and/or fix errors!',
-                    icon: 'error',
-                    confirmButtonText: 'Ok'
-                });
-
-                return false;
-            }
+            return false;
         }
 
         return true;
@@ -78,8 +53,14 @@ const Login = () => {
         if (!validateUserDetails())
             return;
 
+        let url = ""
+        if (userType === 'buyer')
+            url = 'http://localhost:5000/api/buyers/login'
+        else
+            url = 'http://localhost:5000/api/vendors/login'
+
         // Send POST request to backend
-        axios.post('http://localhost:5000/api/buyers/login', {
+        axios.post(url, {
             email: userDetails.email,
             password: userDetails.password,
         })
@@ -87,6 +68,7 @@ const Login = () => {
                 if (res.status === 200) {
                     // Set tokens in local storage
                     localStorage.setItem('token', res.data.token);
+                    localStorage.setItem('user_type', userType);
 
                     // Redirect to home page
                     Swal.fire({

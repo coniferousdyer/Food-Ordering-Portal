@@ -1,15 +1,10 @@
 const mongoose = require("mongoose");
-const multer = require("multer");
 
 // Create schema
 const ItemSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-    },
-    image: {
-        data: Buffer,
-        contentType: String
     },
     vendor_id: {
         type: mongoose.Schema.Types.ObjectId,

@@ -74,6 +74,7 @@ router.post("/register", async (req, res) => {
             const saved_vendor = await new_vendor.save();
             return res.status(201).json({
                 token: token,
+                type: "vendor",
                 vendor: saved_vendor
             });
         });
@@ -122,7 +123,8 @@ router.post("/login", async (req, res) => {
 
             // Return the token and the vendor data
             return res.status(200).json({
-                token,
+                token: token,
+                type: "vendor",
                 vendor: {
                     shop_name: vendor.shop_name,
                     manager_name: vendor.manager_name,
@@ -143,24 +145,35 @@ router.post("/login", async (req, res) => {
 // Edit a vendor's information
 router.patch("/edit", auth, async (req, res) => {
     try {
-        // TODO_BY_ARJUN: CHECK IF EMAIL ALREADY EXISTS
-        // TODO_BY_ARJUN: ENCRYPT PASSWORD ON UPDATION
+        // Find user with same email
+        const vendor = await Vendor.findOne({ email: req.body.email });
+        if (vendor && vendor._id != req.user) {
+            return res.status(409).json({
+                error: "Email already exists",
+            });
+        }
 
-        const vendor = await Vendor.findOneAndUpdate(req.user, {
-            $set: {
-                shop_name: req.body.shop_name,
-                manager_name: req.body.manager_name,
-                email: req.body.email,
-                password: req.body.password,
-                number: req.body.number,
-                opening_time: req.body.opening_time,
-                closing_time: req.body.closing_time,
-            }
-        }, {
+        if (!vendor)
+            vendor = await Vendor.findById(req.user);
+
+        vendor.shop_name = req.body.shop_name;
+        vendor.manager_name = req.body.manager_name;
+        vendor.email = req.body.email;
+        vendor.number = req.body.number;
+        vendor.opening_time = req.body.opening_time;
+        vendor.closing_time = req.body.closing_time;
+
+        // Hash the password
+        if (req.body.password !== "") {
+            const salt = await bcrypt.genSalt();
+            vendor.password = await bcrypt.hash(req.body.password, salt);
+        }
+
+        const saved_vendor = await Vendor.findByIdAndUpdate(req.user, vendor, {
             new: true
         });
 
-        return res.status(200).json(vendor);
+        return res.status(200).json(saved_vendor);
     } catch (err) {
         return res.status(500).json({
             error: err

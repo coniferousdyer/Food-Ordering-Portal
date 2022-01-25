@@ -42,29 +42,6 @@ const Register = () => {
     // Handle user type change
     const handleUserTypeChange = event => {
         setUserType(event.target.value);
-
-        // Reset user details
-        setUserDetails({
-            name: '',
-            email: '',
-            number: '',
-            age: '',
-            batch: 'UG1',
-            shop_name: '',
-            manager_name: '',
-            opening_time: "12:00",
-            closing_time: "12:00",
-            password: '',
-        });
-
-        // Reset error
-        setError({
-            email: false,
-            password: false,
-            age: false,
-            opening_time: false,
-            closing_time: false,
-        });
     }
 
     // Validate user details
@@ -118,6 +95,7 @@ const Register = () => {
                 .then(res => {
                     // Set tokens in local storage
                     localStorage.setItem('token', res.data.token);
+                    localStorage.setItem('user_type', userType);
 
                     Swal.fire({
                         icon: 'success',
@@ -151,7 +129,8 @@ const Register = () => {
                 .then(res => {
                     // Set tokens in local storage
                     localStorage.setItem('token', res.data.token);
-                    
+                    localStorage.setItem('user_type', userType);
+
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
