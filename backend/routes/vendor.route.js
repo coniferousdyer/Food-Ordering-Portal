@@ -146,7 +146,7 @@ router.post("/login", async (req, res) => {
 router.patch("/edit", auth, async (req, res) => {
     try {
         // Find user with same email
-        const vendor = await Vendor.findOne({ email: req.body.email });
+        let vendor = await Vendor.findOne({ email: req.body.email });
         if (vendor && vendor._id != req.user) {
             return res.status(409).json({
                 error: "Email already exists",

@@ -8,6 +8,7 @@ import Login from './components/webpages/General/Login';
 import BuyerDashboard from "./components/webpages/Buyer/BuyerDashboard";
 import VendorDashboard from "./components/webpages/Vendor/VendorDashboard";
 import BuyerProfile from "./components/webpages/Buyer/BuyerProfile";
+import VendorProfile from "./components/webpages/Vendor/VendorProfile";
 
 
 function App() {
@@ -16,7 +17,7 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<VendorProfile />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<div>404</div>} />

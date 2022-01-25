@@ -33,7 +33,7 @@ const Home = () => {
                         </Typography>
                     </div>
                 :
-                <div className="welcome-page">
+                <div>
                     {user_type() === 'buyer' ?
                         <BuyerDashboard />
                         :
