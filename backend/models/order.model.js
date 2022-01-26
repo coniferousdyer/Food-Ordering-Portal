@@ -25,6 +25,24 @@ const OrderSchema = new mongoose.Schema({
         ref: "Item",
         required: true
     },
+    cost: {
+        type: Number,
+        required: true
+    },
+    rating: {
+        type: Number,
+        default: 0
+    },
+    addons: [{
+        addon_name: {
+            type: String,
+            required: true
+        },
+        addon_price: {
+            type: Number,
+            required: true
+        }
+    }],
     quantity: {
         type: Number,
         required: true

@@ -8,6 +8,18 @@ const router = express.Router();
 const Buyer = require("../models/buyer.model");
 const auth = require('../middleware/auth');
 
+// Get all buyers
+router.get("/", auth, async (req, res) => {
+    try {
+        const buyers = await Buyer.find({});
+        return res.status(200).json(buyers);
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
 // Get a particular buyer
 router.get("/details", auth, async (req, res) => {
     try {

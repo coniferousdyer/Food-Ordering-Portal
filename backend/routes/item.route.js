@@ -4,6 +4,7 @@ const path = require("path");
 
 // Load models and auth middleware
 const Item = require("../models/item.model");
+const Order = require("../models/order.model");
 const auth = require("../middleware/auth");
 
 const router = express.Router();
@@ -104,7 +105,7 @@ router.patch("/edit", auth, async (req, res) => {
 // Remove an item from the database
 router.delete("/delete", auth, async (req, res) => {
     try {
-        // TODO_BY_ARJUN: DELETE FROM FAVOURITES AS WELL
+        // TODO_BY_ARJUN: DELETE FROM FAVOURITES AS WELL AND ORDERS
         const item = await Item.findByIdAndDelete(req.body.item_id);
         return res.status(200).json(item);
     } catch (err) {
@@ -117,12 +118,12 @@ router.delete("/delete", auth, async (req, res) => {
 // Updating the rating of the item
 router.patch("/update_rating", auth, async (req, res) => {
     try {
-        const item = await Item.findByIdAndDelete(req.body.item_id);
+        const item = await Item.findById(req.body.item_id);
 
         item.rating.ratings.push(req.body.rating);
         item.rating.count++;
 
-        const updated_item = await findByIdAndUpdate(req.body.item_id, {
+        const updated_item = await Item.findByIdAndUpdate(req.body.item_id, {
             $set: {
                 rating: item.rating
             }
@@ -130,8 +131,20 @@ router.patch("/update_rating", auth, async (req, res) => {
             new: true
         });
 
-        return res.status(200).json(saved_item);
+        const updated_order = await Order.findByIdAndUpdate(req.body.order_id, {
+            $set: {
+                rating: req.body.rating
+            }
+        }, {
+            new: true
+        });
+        
+        return res.status(200).json({ 
+            item: updated_item,
+            order: updated_order
+        });
     } catch (err) {
+        console.log(err);
         return res.status(500).json({
             error: err
         });

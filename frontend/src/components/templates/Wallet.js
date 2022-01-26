@@ -34,8 +34,16 @@ const Wallet = () => {
 
     // Add money to wallet
     const addMoney = () => {
-        if (amount === "" || error)
+        if (amount === "" || error) {
+            Swal.fire({
+                title: "Error",
+                text: "Please enter a valid amount!",
+                icon: "error",
+                confirmButtonText: "OK"
+            });
+
             return;
+        }
 
         axios.patch("http://localhost:5000/api/buyers/update_wallet", {
             wallet: amount,

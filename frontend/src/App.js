@@ -9,6 +9,8 @@ import BuyerDashboard from "./components/webpages/Buyer/BuyerDashboard";
 import VendorDashboard from "./components/webpages/Vendor/VendorDashboard";
 import BuyerProfile from "./components/webpages/Buyer/BuyerProfile";
 import VendorProfile from "./components/webpages/Vendor/VendorProfile";
+import BuyerOrders from "./components/webpages/Buyer/BuyerOrders";
+import VendorOrders from "./components/webpages/Vendor/VendorOrders";
 
 
 function App() {
@@ -17,7 +19,7 @@ function App() {
       <BrowserRouter>
         <Navbar />
         <Routes>
-          <Route path="/" element={<VendorProfile />} />
+          <Route path="/" element={<VendorOrders />} />
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<div>404</div>} />

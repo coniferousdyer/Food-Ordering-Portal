@@ -38,8 +38,8 @@ const BuyerDashboard = () => {
         let tags = [];
         for (let item of items) {
             for (let tag of item.tags) {
-                if (!tags.includes(tag)) {
-                    tags.push(tag);
+                if (!tags.includes(tag.trim())) {
+                    tags.push(tag.trim());
                 }
             }
         }
@@ -85,7 +85,6 @@ const BuyerDashboard = () => {
             if (sort.sort_by === 'Price') {
                 return items.sort((a, b) => a.price - b.price);
             } else if (sort.sort_by === 'Rating') {
-                console.log("1");
                 return items.sort((a, b) => computeRating(a) - computeRating(b));
             } else
                 return items;
@@ -185,6 +184,7 @@ const BuyerDashboard = () => {
                 />
             </Stack>
 
+            {/* TODO_BY_ARJUN: ADD ITEMS TO END OF LIST */}
             <Grid
                 className="item-grid"
                 container

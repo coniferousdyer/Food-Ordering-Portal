@@ -70,59 +70,66 @@ const ItemBuy = ({ item, vendor }) => {
                 title: "Error",
                 text: "Please enter a valid quantity!",
                 icon: "error",
-                confirmButtonText: "Ok"
+                confirmButtonText: "OK"
             });
         } else {
             setDialogOpen(false);
 
-            // Reset state
-            setQuantity(1);
-            setError(null);
-            setSelectedAddons([]);
+            const addonsArray = selectedAddons.map(addon => {
+                return {
+                    addon_name: addon,
+                    addon_price: item.addons.find(i => i.addon_name === addon).addon_price
+                }
+            });
 
             // Make POST request to backend
             axios.post("http://localhost:5000/api/orders/add", {
                 item_id: item._id,
                 vendor_id: vendor._id,
                 quantity: quantity,
-                addons: selectedAddons,
+                addons: addonsArray,
                 cost: calculateTotalPrice()
             }, {
                 headers: {
                     authorization: localStorage.getItem("token")
                 }
             })
-            .then(res => {
-                Swal.fire({
-                    title: "Success",
-                    text: `${item.name} purchased!`,
-                    icon: "success",
-                    confirmButtonText: "Ok"
+                .then(res => {
+                    Swal.fire({
+                        title: "Success",
+                        text: `${item.name} purchased!`,
+                        icon: "success",
+                        confirmButtonText: "OK"
+                    });
+
+                    // Reset state
+                    setQuantity(1);
+                    setError(null);
+                    setSelectedAddons([]);
+                })
+                .catch(err => {
+                    Swal.fire({
+                        title: "Oops!",
+                        text: "Something went wrong!",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                        footer: err.response.data.error
+                    });
                 });
-            })
-            .catch(err => {
-                Swal.fire({
-                    title: "Oops!",
-                    text: "Something went wrong!",
-                    icon: "error",
-                    confirmButtonText: "Ok",
-                    footer: err.response.data.error
-                });
-            });
         }
     }
 
     return (
         <div>
             {ifOpen() ? (
-            <Button
-                className='item-card-button'
-                variant="contained"
-                color="primary"
-                onClick={handleDialogOpen}
-            >
-                Buy Item
-            </Button>
+                <Button
+                    className='item-card-button'
+                    variant="contained"
+                    color="primary"
+                    onClick={handleDialogOpen}
+                >
+                    Buy Item
+                </Button>
             ) : (
                 <Button
                     className='item-card-button'
@@ -166,30 +173,30 @@ const ItemBuy = ({ item, vendor }) => {
                         Enter the quantity you wish to buy
                     </DialogContentText>
                     {error ?
-                    <TextField
-                        autoFocus
-                        id="name"
-                        label="Quantity"
-                        type="number"
-                        fullWidth
-                        margin="normal"
-                        variant="outlined"
-                        value={quantity}
-                        onChange={handleNumberChange}
-                        error
-                    />
-                    :
-                    <TextField
-                        autoFocus
-                        id="name"
-                        label="Quantity"
-                        type="number"
-                        fullWidth
-                        margin="normal"
-                        variant="outlined"
-                        value={quantity}
-                        onChange={handleNumberChange}
-                    />
+                        <TextField
+                            autoFocus
+                            id="name"
+                            label="Quantity"
+                            type="number"
+                            fullWidth
+                            margin="normal"
+                            variant="outlined"
+                            value={quantity}
+                            onChange={handleNumberChange}
+                            error
+                        />
+                        :
+                        <TextField
+                            autoFocus
+                            id="name"
+                            label="Quantity"
+                            type="number"
+                            fullWidth
+                            margin="normal"
+                            variant="outlined"
+                            value={quantity}
+                            onChange={handleNumberChange}
+                        />
                     }
                     <DialogContentText marginTop="1rem">
                         Would you like to select any addons?

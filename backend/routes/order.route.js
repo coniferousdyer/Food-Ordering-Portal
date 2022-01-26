@@ -24,7 +24,7 @@ router.get("/", auth, async (req, res) => {
 router.get("/vendor", auth, async (req, res) => {
     try {
         const orders = await Order.find({
-            vendor_id: req.query.vendor_id
+            vendor_id: req.user
         });
         return res.status(200).json(orders);
     } catch (err) {
@@ -38,7 +38,7 @@ router.get("/vendor", auth, async (req, res) => {
 router.get("/buyer", auth, async (req, res) => {
     try {
         const orders = await Order.find({
-            buyer_id: req.query.buyer_id
+            buyer_id: req.user
         });
         return res.status(200).json(orders);
     } catch (err) {
@@ -61,10 +61,8 @@ router.post("/add", auth, async (req, res) => {
             cost: req.body.cost,
         });
 
-        // TODO_BY_ARJUN: CHECK IF TIMINGS ARE VALID
         // TODO_BY_ARJUN: CHECK FOR UNIQUE NAMES AND EMAILS AND STUFF
 
-        // Find price of the item
         const item = await Item.findById(req.body.item_id);
 
         if (!item) {
@@ -110,6 +108,7 @@ router.post("/add", auth, async (req, res) => {
             item: updated_item
         });
     } catch (err) {
+        console.log(err);
         return res.status(500).json({
             error: err
         });
@@ -120,8 +119,6 @@ router.post("/add", auth, async (req, res) => {
 router.patch("/reject", auth, async (req, res) => {
     try {
         const order = await Order.findByIdAndUpdate(req.body.order_id, {
-            _id: req.body.order_id
-        }, {
             $set: {
                 state: "REJECTED"
             }
@@ -130,7 +127,7 @@ router.patch("/reject", auth, async (req, res) => {
         });
 
         // Refund the buyer's wallet
-        const buyer = await Buyer.findById(req.user);
+        const buyer = await Buyer.findById(req.body.buyer_id);
         const new_wallet_amount = buyer.wallet + order.cost;
         const updated_buyer = await Buyer.findByIdAndUpdate(req.user, {
             $set: {
@@ -141,9 +138,11 @@ router.patch("/reject", auth, async (req, res) => {
         });
 
         // Decrement number of sales of the item
-        const item = await Item.findByIdAndUpdate(order.item_id, {
-            $dec: {
-                number_sold: 1
+        const item = await Item.findById(order.item_id);
+        const new_number_sold = item.number_sold - order.quantity;
+        const updated_item = await Item.findByIdAndUpdate(item._id, {
+            $set: {
+                number_sold: new_number_sold
             }
         }, {
             new: true
@@ -152,9 +151,10 @@ router.patch("/reject", auth, async (req, res) => {
         return res.status(200).json({
             order: order,
             buyer: updated_buyer,
-            item: item
+            item: updated_item
         });
     } catch (err) {
+        console.log(err);
         return res.status(500).json({
             error: err
         });
