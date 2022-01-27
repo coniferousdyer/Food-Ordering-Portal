@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Grid from '@mui/material/Grid';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import SortIcon from '@mui/icons-material/Sort';
 
 
 const ItemSort = ({ sort, setSort }) => {
@@ -32,7 +33,7 @@ const ItemSort = ({ sort, setSort }) => {
     return (
         <div>
             <Button className="filter-button" variant="outlined" onClick={handleDialogOpen}>
-                Sort items
+                <SortIcon style={{ marginRight: "0.5rem" }} />Sort items
             </Button>
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
                 <DialogTitle>Sort Items</DialogTitle>
@@ -42,19 +43,19 @@ const ItemSort = ({ sort, setSort }) => {
                     </DialogContentText>
 
                     {/* Sort category dropdown */}
-                    <Grid 
-                    container
-                    direction="row" 
-                    spacing={12} 
-                    style={{ 
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center"
-                    }}
-                    marginTop={3}
+                    <Grid
+                        container
+                        direction="row"
+                        spacing={12}
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}
+                        marginTop={3}
                     >
-                        <FormControl sx={ matches ? { m: 1, width: 250 } : { m: 1, width: 100 }}>
+                        <FormControl sx={matches ? { m: 1, width: 250 } : { m: 1, width: 100 }}>
                             <InputLabel id="sort-category-checkbox">Sort by</InputLabel>
                             <Select
                                 labelId="sort-category-checkbox-label"
@@ -69,7 +70,7 @@ const ItemSort = ({ sort, setSort }) => {
                         </FormControl>
 
                         {/* Sort order dropdown */}
-                        <FormControl sx={ matches ? { m: 1, width: 250 } : { m: 1, width: 100 }}>
+                        <FormControl sx={matches ? { m: 1, width: 250 } : { m: 1, width: 100 }}>
                             <InputLabel id="sort-order-checkbox">Order</InputLabel>
                             <Select
                                 labelId="sort-order-checkbox-label"

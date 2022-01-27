@@ -16,6 +16,17 @@ import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PhoneInput from 'react-phone-input-2';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableRow from '@mui/material/TableRow';
+import EmailIcon from '@mui/icons-material/Email';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import StorefrontIcon from '@mui/icons-material/Storefront';
+import PersonIcon from '@mui/icons-material/Person';
+import Paper from '@mui/material/Paper'
 import validator from 'validator';
 import Swal from 'sweetalert2';
 
@@ -184,7 +195,7 @@ const VendorProfile = () => {
 
     return (
         <div id="profile-page">
-            <Grid container spacing={3}>
+            <Grid container direction="column" spacing={4} alignItems="center">
                 <Grid item xs={12}>
                     {matches ?
                         <Typography className="registration-heading" variant="h3" component="h1">
@@ -197,52 +208,72 @@ const VendorProfile = () => {
                     }
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        USER TYPE
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        Vendor
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        MANAGER NAME
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {originalUser.manager_name}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        EMAIL
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {originalUser.email}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        NUMBER
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {originalUser.number}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        OPENING TIME
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {originalUser.opening_time}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        CLOSING TIME
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {originalUser.closing_time}
-                    </Typography>
+                    <TableContainer component={Paper} style={{ marginTop: '1.5rem' }}>
+                        <Table aria-label="simple table">
+                            <TableBody>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        <StorefrontIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />User Type
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        Vendor
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                    <PersonIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />Manager Name
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {originalUser.manager_name}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        <EmailIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />Email
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {originalUser.email}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        <LocalPhoneIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />Number
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {originalUser.number}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        <AccessTimeIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />Opening Time
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {originalUser.opening_time}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        <AccessTimeIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />Closing Time
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {originalUser.closing_time}
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </Grid>
                 <Grid item xs={12}>
                     <div>

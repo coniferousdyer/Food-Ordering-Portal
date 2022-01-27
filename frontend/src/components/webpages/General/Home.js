@@ -3,6 +3,7 @@ import Typography from '@mui/material/Typography';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import BuyerDashboard from '../Buyer/BuyerDashboard';
 import VendorDashboard from '../Vendor/VendorDashboard';
+import animation from '../../../assets/img/animation.gif';
 import { user_is_authenticated, user_type } from '../../../lib/auth';
 
 
@@ -14,6 +15,14 @@ const Home = () => {
             {!user_is_authenticated() ?
                 matches ?
                     <div className="welcome-page">
+                        <img 
+                        src={animation} 
+                        alt="Loading..."
+                        style={{
+                            margin: "3rem",
+                            marginTop: "20rem",
+                        }}
+                        />
                         <Typography className="welcome-heading" variant="h2" component="h1">
                             Welcome to the Food Ordering Portal
                         </Typography>

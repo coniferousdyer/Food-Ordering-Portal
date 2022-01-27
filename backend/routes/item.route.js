@@ -73,7 +73,6 @@ router.post("/add", auth, async (req, res, next) => {
 
 router.patch("/edit", auth, async (req, res) => {
     try {
-        // CHECK IF ADDING DUPLICATES
         const item = await Item.findOne({
             vendor_id: req.user,
             name: req.body.original_name
@@ -82,6 +81,17 @@ router.patch("/edit", auth, async (req, res) => {
         if (!item) {
             return res.status(404).json({
                 error: "Item not found",
+            });
+        }
+
+        const duplicate_item = await Item.findOne({
+            vendor_id: req.user,
+            name: req.body.name
+        });
+
+        if (duplicate_item) {
+            return res.status(409).json({
+                error: "Item has already been added by this vendor",
             });
         }
 
@@ -107,7 +117,7 @@ router.patch("/edit", auth, async (req, res) => {
 router.delete("/delete", auth, async (req, res) => {
     try {
         const item = await Item.findByIdAndDelete(req.body.item_id);
-        const order = await Order.findOneAndDelete({
+        const order = await Order.deleteMany({
             item_id: req.body.item_id
         });
         const buyer = await Buyer.updateMany({

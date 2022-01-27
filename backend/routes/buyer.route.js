@@ -34,7 +34,6 @@ router.get("/details", auth, async (req, res) => {
 
 // Add a buyer to the database
 router.post("/register", async (req, res) => {
-    // TODO_BY_ARJUN: CHECK FOR ALL UNIQUENESS
     try {
         // Verify if the user doesn't already exist
         const buyer = await Buyer.findOne({ email: req.body.email })
@@ -165,7 +164,6 @@ router.patch("/edit", auth, async (req, res) => {
             const salt = await bcrypt.genSalt();
             buyer.password = await bcrypt.hash(req.body.password, salt);
         }
-
 
         const saved_buyer = await Buyer.findByIdAndUpdate(req.user, buyer, {
             new: true

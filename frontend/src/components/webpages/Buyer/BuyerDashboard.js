@@ -95,8 +95,22 @@ const BuyerDashboard = () => {
 
     // Sort items
     const sortItems = items => {
+        if (sort.order === 'Ascending') {
+            if (sort.sort_by === 'Price') {
+                items = items.sort((a, b) => a.price - b.price);
+            } else if (sort.sort_by === 'Rating') {
+                items = items.sort((a, b) => computeRating(a) - computeRating(b));
+            }
+        } else if (sort.order === 'Descending') {
+            if (sort.sort_by === 'Price') {
+                items = items.sort((a, b) => b.price - a.price);
+            } else if (sort.sort_by === 'Rating') {
+                items = items.sort((a, b) => computeRating(b) - computeRating(a));
+            }
+        }
+
         // Sort items so that items whose vendors have closed are at the end
-        items.sort((a, b) => {
+        items = items.sort((a, b) => {
             const vendorA = entities.vendors.find(vendor => vendor._id === a.vendor_id);
             const vendorB = entities.vendors.find(vendor => vendor._id === b.vendor_id);
             if (ifOpen(vendorA) && !ifOpen(vendorB))
@@ -107,24 +121,7 @@ const BuyerDashboard = () => {
                 return 0;
         });
 
-        if (sort.order === 'Ascending') {
-            if (sort.sort_by === 'Price') {
-                return items.sort((a, b) => a.price - b.price);
-            } else if (sort.sort_by === 'Rating') {
-                return items.sort((a, b) => computeRating(a) - computeRating(b));
-            } else
-                return items;
-        } else if (sort.order === 'Descending') {
-            if (sort.sort_by === 'Price') {
-                return items.sort((a, b) => b.price - a.price);
-            } else if (sort.sort_by === 'Rating') {
-                return items.sort((a, b) => computeRating(b) - computeRating(a));
-            } else {
-                return items;
-            }
-        } else {
-            return items;
-        }
+        return items;
     }
 
     // Calculate the average rating for the item

@@ -8,6 +8,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import MenuItem from '@mui/material/MenuItem'
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import validator from 'validator';
 import Swal from 'sweetalert2';
 import axios from 'axios';
@@ -194,7 +196,7 @@ const ItemChange = ({ item, onEdit, onDelete }) => {
                             color="primary"
                             onClick={handleDialogOpen}
                         >
-                            Edit
+                            <EditIcon style={{ marginRight: "0.5rem" }} />Edit
                         </Button>
                         <Dialog open={dialogOpen} onClose={handleDialogClose}>
                             <DialogTitle>Edit Item</DialogTitle>
@@ -332,7 +334,7 @@ const ItemChange = ({ item, onEdit, onDelete }) => {
                         color="secondary"
                         onClick={() => { handleDelete(item) }}
                     >
-                        Delete
+                        <DeleteIcon style={{ marginRight: "0.5rem" }} />Delete
                     </Button>
                 </Grid>
             </Grid>

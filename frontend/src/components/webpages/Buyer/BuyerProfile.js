@@ -17,6 +17,18 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import PhoneInput from 'react-phone-input-2';
 import MenuItem from '@mui/material/MenuItem';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableRow from '@mui/material/TableRow';
+import EmailIcon from '@mui/icons-material/Email';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import CakeIcon from '@mui/icons-material/Cake';
+import SchoolIcon from '@mui/icons-material/School';
+import PersonIcon from '@mui/icons-material/Person';
+import Paper from '@mui/material/Paper'
 import validator from 'validator';
 import Swal from 'sweetalert2';
 
@@ -169,7 +181,7 @@ const BuyerProfile = () => {
 
     return (
         <div id="profile-page">
-            <Grid container spacing={3}>
+            <Grid container direction="column" spacing={4} alignItems="center">
                 <Grid item xs={12}>
                     {matches ?
                         <Typography className="registration-heading" variant="h3" component="h1">
@@ -182,44 +194,72 @@ const BuyerProfile = () => {
                     }
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        USER TYPE
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        Buyer
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        EMAIL
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {originalUser.email}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        NUMBER
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {originalUser.number}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        AGE
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {originalUser.age}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        BATCH
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {originalUser.batch}
-                    </Typography>
+                    <TableContainer component={Paper} style={{ marginTop: '1.5rem' }}>
+                        <Table aria-label="simple table">
+                            <TableBody>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        <ShoppingCartIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />User Type
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        Buyer
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        <PersonIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />Name
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {originalUser.name}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        <EmailIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />Email
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {originalUser.email}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        <CakeIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />Age
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {originalUser.age}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        <LocalPhoneIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />Number
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {originalUser.number}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        <SchoolIcon style={{ marginRight: "0.5rem", fontSize: "1rem" }} />Batch
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {originalUser.batch}
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </Grid>
                 <Grid item xs={12}>
                     <div>

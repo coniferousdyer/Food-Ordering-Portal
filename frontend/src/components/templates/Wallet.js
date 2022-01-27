@@ -60,9 +60,10 @@ const Wallet = () => {
                     text: `Rs. ${amount} added to wallet!`,
                     icon: "success",
                     confirmButtonText: "Ok",
+                }).then(() => {
+                    setAmount("");
+                    window.location.reload();
                 });
-
-                setAmount("");
             })
             .catch(err => {
                 console.log(err);
@@ -85,20 +86,20 @@ const Wallet = () => {
                 left: matches ? "auto" : 70,
                 top: matches ? "auto" : 120
             }}
-            >
+        >
             <AccountBalanceWalletIcon style={{ fontSize: "3rem" }} />
             <Stack direction="row">
-                <Typography 
-                variant="h6" 
-                marginBottom={3}
-                style={{
-                    width: "100%",
-                    textAlign: "center",
-                    marginTop: "1rem"
-                }}
+                <Typography
+                    variant="h6"
+                    marginBottom={3}
+                    style={{
+                        width: "100%",
+                        textAlign: "center",
+                        marginTop: "1rem"
+                    }}
                 >
                     Wallet Balance: Rs. {balance}
-                    </Typography>
+                </Typography>
             </Stack>
             <Stack direction="row">
                 {error ?

@@ -18,6 +18,7 @@ import Checkbox from "@mui/material/Checkbox";
 import ListItemText from "@mui/material/ListItemText";
 import Slider from "@mui/material/Slider";
 import useMediaQuery from '@mui/material/useMediaQuery';
+import FilterListIcon from '@mui/icons-material/FilterList';
 
 
 const ItemFilter = ({ entities, filter, setFilter }) => {
@@ -38,7 +39,7 @@ const ItemFilter = ({ entities, filter, setFilter }) => {
     return (
         <div>
             <Button className="filter-button" variant="outlined" onClick={handleDialogOpen}>
-                Filter
+                <FilterListIcon style={{ marginRight: "0.5rem" }} />Filter
             </Button>
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
                 <DialogTitle>Apply Filters</DialogTitle>
@@ -107,7 +108,7 @@ const ItemFilter = ({ entities, filter, setFilter }) => {
 
                         {/* Tags multi-select dropdown */}
                         <Grid item>
-                            <FormControl sx={ matches ? { m: 1, width: 250 } : { m: 1, width: 100 }}>
+                            <FormControl sx={matches ? { m: 1, width: 250 } : { m: 1, width: 100 }}>
                                 <FormLabel id="tags-checkbox">Tags</FormLabel>
                                 <Select
                                     labelId="tags-multiple-checkbox-label"

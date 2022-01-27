@@ -18,6 +18,7 @@ import ListItemText from "@mui/material/ListItemText";
 import validator from "validator";
 import Swal from "sweetalert2";
 import axios from "axios";
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
 
 const ItemBuy = ({ item, vendor }) => {
@@ -131,7 +132,7 @@ const ItemBuy = ({ item, vendor }) => {
                     color="primary"
                     onClick={handleDialogOpen}
                 >
-                    Buy Item
+                    <AddShoppingCartIcon style={{ marginRight: "0.5rem" }} />Buy Item
                 </Button>
             ) : (
                 <Button

@@ -61,8 +61,6 @@ router.post("/add", auth, async (req, res) => {
             cost: req.body.cost,
         });
 
-        // TODO_BY_ARJUN: CHECK FOR UNIQUE NAMES AND EMAILS AND STUFF
-
         const item = await Item.findById(req.body.item_id);
 
         if (!item) {

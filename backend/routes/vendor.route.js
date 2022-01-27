@@ -43,6 +43,13 @@ router.post("/register", async (req, res) => {
             });
         }
 
+        const duplicate_vendor = await Vendor.findOne({ shop_name: req.body.shop_name });
+        if (duplicate_vendor) {
+            return res.status(409).json({
+                error: "Shop name already exists",
+            });
+        }
+
         // Create a new vendor
         const new_vendor = new Vendor({
             shop_name: req.body.shop_name,

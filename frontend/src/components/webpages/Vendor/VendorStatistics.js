@@ -10,7 +10,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { VictoryBar, VictoryChart, VictoryPie, VictoryTooltip } from "victory";
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import axios from 'axios';
+import { user_type } from '../../../lib/auth';
 
 
 const VendorStatistics = () => {
@@ -24,37 +27,39 @@ const VendorStatistics = () => {
     const matches = useMediaQuery('(min-width:480px)');
 
     useEffect(() => {
-        async function fetchData() {
-            const response_1 = await axios.get('http://localhost:5000/api/orders/vendor', {
-                headers: {
-                    authorization: localStorage.getItem('token')
-                }
-            });
-            const response_2 = await axios.get('http://localhost:5000/api/items', {
-                headers: {
-                    authorization: localStorage.getItem('token')
-                }
-            });
-            const response_3 = await axios.get('http://localhost:5000/api/vendors/details', {
-                headers: {
-                    authorization: localStorage.getItem('token')
-                }
-            });
-            const response_4 = await axios.get('http://localhost:5000/api/buyers', {
-                headers: {
-                    authorization: localStorage.getItem('token')
-                }
-            });
+        if (user_type() === 'vendor') {
+            async function fetchData() {
+                const response_1 = await axios.get('http://localhost:5000/api/orders/vendor', {
+                    headers: {
+                        authorization: localStorage.getItem('token')
+                    }
+                });
+                const response_2 = await axios.get('http://localhost:5000/api/items', {
+                    headers: {
+                        authorization: localStorage.getItem('token')
+                    }
+                });
+                const response_3 = await axios.get('http://localhost:5000/api/vendors/details', {
+                    headers: {
+                        authorization: localStorage.getItem('token')
+                    }
+                });
+                const response_4 = await axios.get('http://localhost:5000/api/buyers', {
+                    headers: {
+                        authorization: localStorage.getItem('token')
+                    }
+                });
 
-            setEntities({
-                orders: response_1.data,
-                items: response_2.data,
-                vendor: response_3.data,
-                buyers: response_4.data,
-            })
+                setEntities({
+                    orders: response_1.data,
+                    items: response_2.data,
+                    vendor: response_3.data,
+                    buyers: response_4.data,
+                })
+            }
+
+            fetchData();
         }
-
-        fetchData();
     }, []);
 
     // Compute pending orders
@@ -157,6 +162,7 @@ const VendorStatistics = () => {
     }
 
     return (
+        user_type() === 'vendor' &&
         <div className="vendor-statistics">
             <Grid container direction="column" spacing={4} alignItems="center">
                 <Grid item xs={12}>
@@ -172,14 +178,55 @@ const VendorStatistics = () => {
                 </Grid>
                 <Grid item xs={12}>
                     <Typography variant="h5" component="h1">
+                        ORDER STATISTICS
+                    </Typography>
+                    <TableContainer component={Paper} style={{ marginTop: '1.5rem' }}>
+                        <Table aria-label="simple table">
+                            <TableBody>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        Orders Placed
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {entities.orders.length}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        Pending Orders
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {pendingOrders()}
+                                    </TableCell>
+                                </TableRow>
+                                <TableRow
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell component="th" scope="row">
+                                        Completed Orders
+                                    </TableCell>
+                                    <TableCell align="right">
+                                        {completedOrders()}
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Grid>
+                <Grid item xs={12}>
+                    <Typography variant="h5" component="h1">
                         TOP 5 ITEMS SOLD
                     </Typography>
                     <TableContainer component={Paper} style={{ marginTop: '1.5rem' }}>
                         <Table aria-label="simple table">
                             <TableHead>
                                 <TableRow>
-                                    <TableCell>Name</TableCell>
-                                    <TableCell align="right">Number Sold</TableCell>
+                                    <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
+                                    <TableCell style={{ fontWeight: "bold" }} align="right">Number Sold</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -201,80 +248,64 @@ const VendorStatistics = () => {
                     </TableContainer>
                 </Grid>
                 <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        ORDERS PLACED
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {entities.orders.length}
-                    </Typography>
+                    <Card className="batch-statistics">
+                        <CardContent>
+                            <Typography variant="h5" component="h1">
+                                BATCH-WISE STATISTICS
+                            </Typography>
+                            <Grid container direction="row" spacing={4}>
+                                <Grid item xs={6}>
+                                    <VictoryPie
+                                        data={batchStatistics()}
+                                        colorScale={["#00a1e4", "#fbc02d", "#8e24aa", "#d81b60", "#039be5"]}
+                                        labelComponent={<VictoryTooltip />}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <VictoryChart horizontal
+                                        domainPadding={{ x: 8 }}
+                                    >
+                                        <VictoryBar
+                                            data={batchStatistics()}
+                                            style={{
+                                                data: { fill: "#c43a31" }
+                                            }}
+                                        />
+                                    </VictoryChart>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
                 </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        PENDING ORDERS
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {pendingOrders()}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        COMPLETED ORDERS
-                    </Typography>
-                    <Typography variant="body1" component="p">
-                        {completedOrders()}
-                    </Typography>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        BATCH-WISE STATISTICS
-                    </Typography>
-                    <Grid container direction="row" spacing={4}>
-                        <Grid item xs={6}>
-                            <VictoryPie
-                                data={batchStatistics()}
-                                colorScale={["#00a1e4", "#fbc02d", "#8e24aa", "#d81b60", "#039be5"]}
-                                labelComponent={<VictoryTooltip />}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <VictoryChart horizontal
-                                domainPadding={{ x: 8 }}
-                            >
-                                <VictoryBar
-                                    data={batchStatistics()}
-                                    style={{
-                                        data: { fill: "#c43a31" }
-                                    }}
-                                />
-                            </VictoryChart>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        AGE-WISE STATISTICS
-                    </Typography>
-                    <Grid container direction="row" spacing={4}>
-                        <Grid item xs={6}>
-                            <VictoryPie
-                                data={ageStatistics()}
-                                colorScale={["#00a1e4", "#fbc02d", "#8e24aa", "#d81b60", "#039be5"]}
-                                labelComponent={<VictoryTooltip />}
-                            />
-                        </Grid>
-                        <Grid item xs={6}>
-                            <VictoryChart horizontal
-                                domainPadding={{ x: 8 }}
-                            >
-                                <VictoryBar
-                                    data={ageStatistics()}
-                                    style={{
-                                        data: { fill: "#c43a31" }
-                                    }}
-                                />
-                            </VictoryChart>
-                        </Grid>
-                    </Grid>
+                <Grid item xs={12} style={{ marginBottom: "3rem" }}>
+                    <Card className="age-statistics">
+                        <CardContent>
+                            <Typography variant="h5" component="h1">
+                                AGE-WISE STATISTICS
+                            </Typography>
+                            <Grid container direction="row" spacing={4}>
+                                <Grid item xs={6}>
+                                    <VictoryPie
+                                        data={ageStatistics()}
+                                        colorScale={["#00a1e4", "#fbc02d", "#8e24aa", "#d81b60", "#039be5"]}
+                                        labelComponent={<VictoryTooltip />}
+                                    />
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <VictoryChart horizontal
+                                        domainPadding={{ x: 8 }}
+                                    >
+                                        <VictoryBar
+                                            data={ageStatistics()}
+                                            style={{
+                                                data: { fill: "#c43a31" }
+                                            }}
+                                        />
+                                    </VictoryChart>
+                                </Grid>
+                            </Grid>
+                        </CardContent>
+                    </Card>
                 </Grid>
             </Grid>
         </div>

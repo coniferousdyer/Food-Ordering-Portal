@@ -141,7 +141,7 @@ const ItemAdd = ({ onAdd }) => {
                             right: 50,
                         }}
                     >
-                        <AddIcon />
+                        <AddIcon style={{ marginRight: "0.5rem" }} />
                         Add Item
                     </Button>
                     :
@@ -151,7 +151,7 @@ const ItemAdd = ({ onAdd }) => {
                         onClick={handleDialogOpen}
                         style={{
                             position: 'absolute',
-                            top: 110,
+                            top: 125,
                             right: 90,
                         }}
                     >
