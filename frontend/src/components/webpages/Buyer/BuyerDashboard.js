@@ -14,7 +14,7 @@ import Stack from "@mui/material/Stack";
 import Wallet from "../../templates/Wallet";
 
 
-const BuyerDashboard = () => {  
+const BuyerDashboard = () => {
     const [entities, setEntities] = useState({
         items: [],
         vendors: [],
@@ -79,8 +79,34 @@ const BuyerDashboard = () => {
         return true;
     }
 
+    // Verify if vendor has not closed
+    const ifOpen = vendor => {
+        let openingTime = vendor.opening_time.split(":");
+        openingTime = new Date(0, 0, 0, openingTime[0], openingTime[1], 0).getTime();
+        let closingTime = vendor.closing_time.split(":");
+        closingTime = new Date(0, 0, 0, closingTime[0], closingTime[1], 0).getTime();
+        const currentTime = new Date(0, 0, 0, new Date().getHours(), new Date().getMinutes(), 0).getTime();
+
+        if (currentTime < openingTime || currentTime > closingTime)
+            return false;
+        else
+            return true;
+    }
+
     // Sort items
     const sortItems = items => {
+        // Sort items so that items whose vendors have closed are at the end
+        items.sort((a, b) => {
+            const vendorA = entities.vendors.find(vendor => vendor._id === a.vendor_id);
+            const vendorB = entities.vendors.find(vendor => vendor._id === b.vendor_id);
+            if (ifOpen(vendorA) && !ifOpen(vendorB))
+                return -1;
+            else if (!ifOpen(vendorA) && ifOpen(vendorB))
+                return 1;
+            else
+                return 0;
+        });
+
         if (sort.order === 'Ascending') {
             if (sort.sort_by === 'Price') {
                 return items.sort((a, b) => a.price - b.price);
@@ -184,7 +210,6 @@ const BuyerDashboard = () => {
                 />
             </Stack>
 
-            {/* TODO_BY_ARJUN: ADD ITEMS TO END OF LIST */}
             <Grid
                 className="item-grid"
                 container

@@ -54,7 +54,7 @@ const ItemFilter = ({ entities, filter, setFilter }) => {
                                 <FormLabel id="food-category-checkbox">Category</FormLabel>
                                 <RadioGroup
                                     aria-labelledby="food-category-radio-buttons-group-label"
-                                    defaultValue="Both"
+                                    value={filter.vegetarian}
                                     name="food-category-radio-buttons-group"
                                     onChange={(e) => setFilter({ ...filter, vegetarian: e.target.value })}
                                 >

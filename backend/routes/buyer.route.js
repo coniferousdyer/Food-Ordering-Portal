@@ -223,6 +223,25 @@ router.patch("/add_favourite", auth, async (req, res) => {
     }
 });
 
+// Remove from a buyer's favourite list
+router.patch("/remove_favourite", auth, async (req, res) => {
+    try {
+        const buyer = await Buyer.findByIdAndUpdate(req.user, {
+            $pull: {
+                favourite_items: req.body.item_id,
+            }
+        }, {
+            new: true
+        })
+
+        return res.status(200).json(buyer);
+    } catch (err) {
+        return res.status(500).json({
+            error: err
+        });
+    }
+});
+
 // Delete a buyer
 router.delete("/delete", auth, async (req, res) => {
     try {

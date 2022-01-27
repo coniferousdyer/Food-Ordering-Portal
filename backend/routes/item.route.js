@@ -4,6 +4,7 @@ const path = require("path");
 
 // Load models and auth middleware
 const Item = require("../models/item.model");
+const Buyer = require("../models/buyer.model");
 const Order = require("../models/order.model");
 const auth = require("../middleware/auth");
 
@@ -105,8 +106,20 @@ router.patch("/edit", auth, async (req, res) => {
 // Remove an item from the database
 router.delete("/delete", auth, async (req, res) => {
     try {
-        // TODO_BY_ARJUN: DELETE FROM FAVOURITES AS WELL AND ORDERS
         const item = await Item.findByIdAndDelete(req.body.item_id);
+        const order = await Order.findOneAndDelete({
+            item_id: req.body.item_id
+        });
+        const buyer = await Buyer.updateMany({
+            favourite_items: {
+                $in: [req.body.item_id]
+            }
+        }, {
+            $pull: {
+                favourite_items: req.body.item_id
+            }
+        });
+
         return res.status(200).json(item);
     } catch (err) {
         return res.status(500).json({
@@ -138,8 +151,8 @@ router.patch("/update_rating", auth, async (req, res) => {
         }, {
             new: true
         });
-        
-        return res.status(200).json({ 
+
+        return res.status(200).json({
             item: updated_item,
             order: updated_order
         });

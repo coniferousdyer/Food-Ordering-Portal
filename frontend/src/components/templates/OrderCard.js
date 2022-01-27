@@ -8,12 +8,15 @@ import Grid from "@mui/material/Grid";
 import Rating from '@mui/material/Rating';
 import moment from "moment";
 import axios from 'axios';
+import useMediaQuery from '@mui/material/useMediaQuery';
 import Swal from 'sweetalert2';
 import { user_type } from '../../lib/auth';
 
 
 const OrderCard = ({ buyer, order, item, vendor, entities, setEntities }) => {
     const [rating, setRating] = useState(order.rating);
+
+    const matches = useMediaQuery('(min-width:480px)');
 
     // Handle rating change
     const handleRatingChange = value => {
@@ -134,7 +137,7 @@ const OrderCard = ({ buyer, order, item, vendor, entities, setEntities }) => {
     }
 
     return (
-        <Card style={{ margin: "1rem", width: "50%" }}>
+        <Card style={{ margin: "1rem", width: matches ? "50%" : "90%" }}>
             <CardContent align="left" style={{ paddingLeft: "3rem" }}>
                 <Typography variant="h5" component="h2" style={{ marginTop: "1rem", marginBottom: "1rem" }}>
                     {item.name}
@@ -184,6 +187,7 @@ const OrderCard = ({ buyer, order, item, vendor, entities, setEntities }) => {
                             value={order.rating}
                         />
                         :
+                        order.state === "COMPLETED" &&
                         <Rating
                             style={{ marginTop: "1rem" }}
                             name="simple-controlled"
@@ -205,25 +209,37 @@ const OrderCard = ({ buyer, order, item, vendor, entities, setEntities }) => {
                 />
                 {user_type() === "vendor" && order.state !== "COMPLETED" && order.state !== "REJECTED" ?
                     <Grid container>
-                        <Button
-                            variant="contained"
-                            color="primary"
-                            style={{ marginTop: "1.5rem" }}
-                            onClick={handleStatusUpdate}
-                        >
-                            Update Status
-                        </Button>
+                        {order.state !== "READY FOR PICKUP" &&
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                style={{ marginTop: "1.5rem" }}
+                                onClick={handleStatusUpdate}
+                            >
+                                Move To Next Stage
+                            </Button>
+                        }
                         <Button
                             variant="contained"
                             color="secondary"
-                            style={{ marginTop: "1.5rem", marginLeft: "1rem" }}
+                            style={{ marginTop: "1.5rem", marginLeft: order.state === "READY FOR PICKUP" ? "0rem" : "1rem" }}
                             onClick={handleRejection}
                         >
                             Reject Order
                         </Button>
                     </Grid>
                     :
-                    null
+                    order.state === "READY FOR PICKUP" &&
+                    <Grid container>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            style={{ marginTop: "1.5rem" }}
+                            onClick={handleStatusUpdate}
+                        >
+                            Pick Up
+                        </Button>
+                    </Grid>
                 }
             </CardContent>
         </Card >

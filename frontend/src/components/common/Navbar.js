@@ -7,7 +7,7 @@ import Button from '@mui/material/Button';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import Swal from 'sweetalert2';
 
-import { user_is_authenticated, user_logout } from '../../lib/auth';
+import { user_is_authenticated, user_logout, user_type } from '../../lib/auth';
 
 const Navbar = () => {
     const matches = useMediaQuery('(min-width:480px)');
@@ -18,11 +18,11 @@ const Navbar = () => {
             title: 'Success',
             text: 'You have successfully logged out!',
             icon: 'success',
-            confirmButtonText: 'Ok'
+            confirmButtonText: 'OK'
         })
-        .then(() => {
-            window.location.href = '/';
-        });
+            .then(() => {
+                window.location.href = '/';
+            });
     }
 
     return (
@@ -35,8 +35,11 @@ const Navbar = () => {
                     {user_is_authenticated() ?
                         <div>
                             <Button color="inherit" href="/">Home</Button>
-                            <Button color="inherit">Orders</Button>
-                            <Button color="inherit">Profile</Button>
+                            <Button color="inherit" href="/orders">Orders</Button>
+                            {user_type() === 'vendor' &&
+                                <Button color="inherit" order="/statistics">Statistics</Button>
+                            }
+                            <Button color="inherit" order="/profile">Profile</Button>
                             <Button color="inherit" onClick={handleLogout}>Logout</Button>
                         </div>
                         :

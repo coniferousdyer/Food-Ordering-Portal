@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
@@ -6,11 +7,126 @@ import Chip from '@mui/material/Chip';
 import Grid from '@mui/material/Grid';
 import ItemBuy from './ItemBuy';
 import ItemChange from './ItemChange';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import axios from "axios";
+import Swal from "sweetalert2";
+import { user_type } from "../../lib/auth";
 
 
 const ItemCard = ({ item, vendor, computeRating, onEdit, onDelete }) => {
+    const [isFavourite, setIsFavourite] = useState(false);
+
+    useEffect(() => {
+        if (user_type() === 'buyer') {
+            axios
+                .get(`http://localhost:5000/api/buyers/details`, {
+                    headers: {
+                        authorization: localStorage.getItem('token')
+                    }
+                })
+                .then(res => {
+                    const buyer = res.data;
+                    const isFavourite = buyer.favourite_items.some(f => f === item._id);
+                    setIsFavourite(isFavourite);
+                })
+                .catch(err => {
+                    console.log(err);
+                });
+        }
+    }, [item]);
+
+    // Handle favourite addition
+    const handleFavouriteAdd = () => {
+        axios
+            .patch(`http://localhost:5000/api/buyers/add_favourite`, {
+                item_id: item._id
+            }, {
+                headers: {
+                    authorization: localStorage.getItem('token')
+                }
+            })
+            .then(res => {
+                setIsFavourite(true);
+                Swal.fire({
+                    title: 'Favourite added!',
+                    text: `You added ${item.name} to your favourites!`,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            })
+            .catch(err => {
+                Swal.fire({
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    footer: err.response.data.error
+                });
+            });
+    }
+
+    // Handle favourite removal
+    const handleFavouriteRemove = () => {
+        axios
+            .patch(`http://localhost:5000/api/buyers/remove_favourite`, {
+                item_id: item._id
+            }, {
+                headers: {
+                    authorization: localStorage.getItem('token')
+                }
+            })
+            .then(res => {
+                setIsFavourite(false);
+                Swal.fire({
+                    title: 'Favourite removed!',
+                    text: `You removed ${item.name} from your favourites!`,
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                });
+            })
+            .catch(err => {
+                Swal.fire({
+                    title: 'Oops...',
+                    text: 'Something went wrong!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                    footer: err.response.data.error
+                });
+            });
+    }
+
     return (
-        <Card>
+        <Card style={{
+            position: 'relative',
+        }}>
+            {!isFavourite ?
+                user_type() === 'buyer' &&
+                <FavoriteBorderIcon
+                    aria-label="toggle favourite"
+                    style={{
+                        position: 'absolute',
+                        top: "0.5rem",
+                        right: "0.5rem",
+                        color: '#ff69b4',
+                        cursor: 'pointer',
+                    }}
+                    onClick={handleFavouriteAdd}
+                />
+                :
+                user_type() === 'buyer' &&
+                <FavoriteIcon
+                    aria-label="toggle favourite"
+                    style={{
+                        position: 'absolute',
+                        top: "0.5rem",
+                        right: "0.5rem",
+                        color: '#ff69b4',
+                        cursor: 'pointer',
+                    }}
+                    onClick={handleFavouriteRemove}
+                />
+            }
             <CardContent>
                 <Typography gutterBottom variant="h5" component="h2" style={{ marginTop: "1.5rem" }}>
                     {item.name}

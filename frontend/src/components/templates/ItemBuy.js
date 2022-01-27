@@ -18,7 +18,7 @@ import ListItemText from "@mui/material/ListItemText";
 import validator from "validator";
 import Swal from "sweetalert2";
 import axios from "axios";
-// TODO_BY_ARJUN: Update wallet balance
+
 
 const ItemBuy = ({ item, vendor }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -100,6 +100,9 @@ const ItemBuy = ({ item, vendor }) => {
                         text: `${item.name} purchased!`,
                         icon: "success",
                         confirmButtonText: "OK"
+                    })
+                    .then(() => {
+                        window.location.reload();
                     });
 
                     // Reset state
