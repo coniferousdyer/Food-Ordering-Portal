@@ -13,12 +13,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import validator from 'validator';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import FormData from 'form-data';
 
 
 const ItemChange = ({ item, onEdit, onDelete }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [itemDetails, setItemDetails] = useState({
         name: item.name,
+        image: null,
         price: item.price,
         category: item.category,
         tags: item.tags,
@@ -36,6 +38,7 @@ const ItemChange = ({ item, onEdit, onDelete }) => {
         // Reset state
         setItemDetails({
             name: item.name,
+            image: null,
             price: item.price,
             category: item.category,
             tags: item.tags,
@@ -139,23 +142,22 @@ const ItemChange = ({ item, onEdit, onDelete }) => {
         }
 
         handleDialogClose();
+
+        // Create form data
+        let formData = new FormData();
+        formData.append('item_id', item._id);
+        formData.append('original_name', item.name);
+        formData.append('name', itemDetails.name);
+        formData.append('price', itemDetails.price);
+        formData.append('category', itemDetails.category);
+        formData.append('tags', itemDetails.tags);
+        formData.append('addons', addonsString);
+
         axios
-            .patch(`http://localhost:5000/api/items/edit`, {
-                item_id: item._id,
-                original_name: item.name,
-                name: itemDetails.name,
-                price: itemDetails.price,
-                category: itemDetails.category,
-                tags: itemDetails.tags,
-                addons: addonsString.split(",").map(addon => {
-                    return {
-                        addon_name: addon.split("-")[0],
-                        addon_price: Number(addon.split("-")[1])
-                    }
-                }),
-            }, {
+            .patch(`http://localhost:5000/api/items/edit`, formData, {
                 headers: {
-                    authorization: localStorage.getItem("token")
+                    authorization: localStorage.getItem("token"),
+                    'Content-Type': 'multipart/form-data',
                 }
             })
             .then(res => {
@@ -227,6 +229,40 @@ const ItemChange = ({ item, onEdit, onDelete }) => {
                                             })
                                         }
                                     />
+
+                                    {/* Image Upload */}
+                                    <Button
+                                        variant="contained"
+                                        component="label"
+                                        style={{
+                                            marginTop: "1.5rem",
+                                        }}
+                                    >
+                                        Upload File
+                                        <input
+                                            type="file"
+                                            hidden
+                                            onChange={e =>
+                                                setItemDetails({
+                                                    ...itemDetails,
+                                                    image: e.target.files[0],
+                                                })
+                                            }
+                                        />
+                                    </Button>
+
+                                    {/* Uploaded Image Preview */}
+                                    {itemDetails.image &&
+                                        <img
+                                            src={URL.createObjectURL(itemDetails.image)}
+                                            alt="item"
+                                            style={{
+                                                width: "25%",
+                                                height: "auto",
+                                                marginTop: "1rem",
+                                            }}
+                                        />
+                                    }
 
                                     {/* Price */}
                                     {priceError ?

@@ -10,6 +10,10 @@ const auth = require("../middleware/auth");
 
 const router = express.Router();
 
+// Set up multer
+const multer = require("multer");
+const upload = multer({ dest: "./public/images/" }).single("image");
+
 // Get all items
 router.get("/", auth, async (req, res) => {
     try {
@@ -37,7 +41,7 @@ router.get("/vendor", auth, async (req, res) => {
 });
 
 // Add an item to the database
-router.post("/add", auth, async (req, res, next) => {
+router.post("/add", auth, upload, async (req, res) => {
     try {
         // Verify that the vendor hasn't already added an item with the same name
         const item = await Item.findOne({
@@ -51,14 +55,34 @@ router.post("/add", auth, async (req, res, next) => {
             });
         }
 
+        // If an image file was uploaded, save it to the server
+        let image = "";
+        if (req.file) {
+            image = req.file.filename;
+        } else {
+            image = "default.jpg";
+        }
+
+        // If any addons were provided
+        let addons = [];
+        if (req.body.addons !== "") {
+            addons = req.body.addons.split(",").map(addon => {
+                return {
+                    addon_name: addon.split("-")[0],
+                    addon_price: Number(addon.split("-")[1])
+                }
+            })
+        }
+
         // Create a new item
         const new_item = new Item({
             name: req.body.name,
+            image: image,
             vendor_id: req.user,
             price: req.body.price,
             category: req.body.category,
-            addons: req.body.addons,
-            tags: req.body.tags,
+            addons: addons,
+            tags: req.body.tags.split(","),
         });
 
         // Save the item
@@ -98,8 +122,22 @@ router.patch("/edit", auth, async (req, res) => {
         item.name = req.body.name;
         item.price = req.body.price;
         item.category = req.body.category;
-        item.addons = req.body.addons;
-        item.tags = req.body.tags;
+        item.tags = req.body.tags.split(",");
+
+        // If an image file was uploaded, save it to the server
+        if (req.file) {
+            item.image = req.file.filename;
+        }
+
+        // If any addons were provided
+        if (req.body.addons !== "") {
+            item.addons = req.body.addons.split(",").map(addon => {
+                return {
+                    addon_name: addon.split("-")[0],
+                    addon_price: Number(addon.split("-")[1])
+                }
+            })
+        }
 
         const saved_item = await Item.findByIdAndUpdate(item._id, item, {
             new: true

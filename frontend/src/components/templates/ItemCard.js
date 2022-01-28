@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Rating from '@mui/material/Rating';
 import Chip from '@mui/material/Chip';
@@ -127,8 +128,14 @@ const ItemCard = ({ item, vendor, computeRating, onEdit, onDelete }) => {
                     onClick={handleFavouriteRemove}
                 />
             }
+            <CardMedia
+                component="img"
+                height="250"
+                image={'http://localhost:5000/public/images/' + item.image}
+                alt="food"
+            />
             <CardContent>
-                <Typography gutterBottom variant="h5" component="h2" style={{ marginTop: "1.5rem" }}>
+                <Typography gutterBottom variant="h5" component="h2" style={{ marginTop: "0.5rem" }}>
                     {item.name}
                 </Typography>
                 <Rating name="read-only" value={computeRating(item)} readOnly />

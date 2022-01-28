@@ -13,12 +13,14 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import validator from 'validator';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import FormData from 'form-data';
 
 
 const ItemAdd = ({ onAdd }) => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [itemDetails, setItemDetails] = useState({
         name: "",
+        image: null,
         price: 0,
         category: "Vegetarian",
         tags: [],
@@ -37,6 +39,7 @@ const ItemAdd = ({ onAdd }) => {
         // Reset state
         setItemDetails({
             name: "",
+            image: null,
             price: 0,
             category: "Vegetarian",
             tags: [],
@@ -89,20 +92,20 @@ const ItemAdd = ({ onAdd }) => {
 
         // Add item
         handleDialogClose();
-        axios.post('http://localhost:5000/api/items/add', {
-            name: itemDetails.name,
-            price: itemDetails.price,
-            category: itemDetails.category,
-            tags: itemDetails.tags,
-            addons: addonsString.split(",").map(addon => {
-                return {
-                    addon_name: addon.split("-")[0],
-                    addon_price: Number(addon.split("-")[1])
-                }
-            }),
-        }, {
+
+        // Create form data
+        let formData = new FormData();
+        formData.append('name', itemDetails.name);
+        formData.append('price', itemDetails.price);
+        formData.append('category', itemDetails.category);
+        formData.append('tags', itemDetails.tags);
+        formData.append('addons', addonsString);
+        formData.append('image', itemDetails.image);
+
+        axios.post('http://localhost:5000/api/items/add', formData, {
             headers: {
-                authorization: localStorage.getItem("token")
+                authorization: localStorage.getItem("token"),
+                'Content-Type': 'multipart/form-data'
             }
         })
             .then(res => {
@@ -160,10 +163,10 @@ const ItemAdd = ({ onAdd }) => {
                     </Button>
                 }
                 <Dialog open={dialogOpen} onClose={handleDialogClose}>
-                    <DialogTitle>Edit Item</DialogTitle>
+                    <DialogTitle>Add Item</DialogTitle>
                     <DialogContent>
                         <DialogContentText>
-                            Edit the item details below
+                            Enter the item details below
                         </DialogContentText>
                         <Grid
                             direction="column"
@@ -188,6 +191,40 @@ const ItemAdd = ({ onAdd }) => {
                                     })
                                 }
                             />
+
+                            {/* Image Upload */}
+                            <Button
+                                variant="contained"
+                                component="label"
+                                style={{
+                                    marginTop: "1.5rem",
+                                }}
+                            >
+                                Upload File
+                                <input
+                                    type="file"
+                                    hidden
+                                    onChange={e =>
+                                        setItemDetails({
+                                            ...itemDetails,
+                                            image: e.target.files[0],
+                                        })
+                                    }
+                                />
+                            </Button>
+
+                            {/* Uploaded Image Preview */}
+                            {itemDetails.image &&
+                                <img
+                                    src={URL.createObjectURL(itemDetails.image)}
+                                    alt="item"
+                                    style={{
+                                        width: "25%",
+                                        height: "auto",
+                                        marginTop: "1rem",
+                                    }}
+                                />
+                            }
 
                             {/* Price */}
                             {priceError ?

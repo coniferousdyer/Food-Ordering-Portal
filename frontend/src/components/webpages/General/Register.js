@@ -137,7 +137,7 @@ const Register = () => {
                         text: 'You have successfully registered!',
                     }).then(() => {
                         // Redirect to login page
-                        window.location = '/login';
+                        window.location = '/';
                     });
                 }).catch(err => {
                     Swal.fire({
