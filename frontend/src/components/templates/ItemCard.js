@@ -54,7 +54,10 @@ const ItemCard = ({ item, vendor, computeRating, onEdit, onDelete }) => {
                     text: `You added ${item.name} to your favourites!`,
                     icon: 'success',
                     confirmButtonText: 'OK'
-                });
+                })
+                    .then(() => {
+                        window.location.reload();
+                    });
             })
             .catch(err => {
                 Swal.fire({
@@ -84,7 +87,10 @@ const ItemCard = ({ item, vendor, computeRating, onEdit, onDelete }) => {
                     text: `You removed ${item.name} from your favourites!`,
                     icon: 'success',
                     confirmButtonText: 'OK'
-                });
+                })
+                    .then(() => {
+                        window.location.reload();
+                    });
             })
             .catch(err => {
                 Swal.fire({

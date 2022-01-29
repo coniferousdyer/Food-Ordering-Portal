@@ -80,9 +80,23 @@ const ItemAdd = ({ onAdd }) => {
     const handleAdd = () => {
         // Validate item details
         if (validator.isEmpty(itemDetails.name) || priceError || addonsError) {
+            handleDialogClose();
             Swal.fire({
                 title: 'Error',
                 text: 'Please fill all the details and/or fix errors!!',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+
+            return;
+        }
+
+        // Checking price limit
+        if (itemDetails.price > 200) {
+            handleDialogClose();
+            Swal.fire({
+                title: 'Error',
+                text: 'Price cannot be more than 200!',
                 icon: 'error',
                 confirmButtonText: 'OK'
             });

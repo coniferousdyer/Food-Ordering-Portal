@@ -12,6 +12,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Wallet from "../../templates/Wallet";
+import BuyerFavourites from "./BuyerFavourites";
 
 
 const BuyerDashboard = () => {
@@ -192,7 +193,7 @@ const BuyerDashboard = () => {
                 onChange={(e) => setFilter({ ...filter, search: e.target.value })}
             />
 
-            <Stack direction="row" justifyContent="center">
+            <Stack direction={matches ? "row" : "column"} justifyContent="center">
                 <ItemFilter
                     filter={filter}
                     setFilter={setFilter}
@@ -205,6 +206,7 @@ const BuyerDashboard = () => {
                     setSort={setSort}
                     computeRating={computeRating}
                 />
+                <BuyerFavourites />
             </Stack>
 
             <Grid

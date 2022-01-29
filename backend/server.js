@@ -38,5 +38,3 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, err =
 app.listen(port, function () {
     console.log(`Server is running on port ${port}!`);
 });
-
-// TODO_BY_ARJUN: ADD USER TYPE CHECKS

@@ -219,14 +219,16 @@ const OrderCard = ({ buyer, order, item, vendor, entities, setEntities }) => {
                                 Move To Next Stage
                             </Button>
                         }
-                        <Button
-                            variant="contained"
-                            color="secondary"
-                            style={{ marginTop: "1.5rem", marginLeft: order.state === "READY FOR PICKUP" ? "0rem" : "1rem" }}
-                            onClick={handleRejection}
-                        >
-                            Reject Order
-                        </Button>
+                        {order.state === "PLACED" &&
+                            <Button
+                                variant="contained"
+                                color="secondary"
+                                style={{ marginTop: "1.5rem", marginLeft: order.state === "READY FOR PICKUP" ? "0rem" : "1rem" }}
+                                onClick={handleRejection}
+                            >
+                                Reject Order
+                            </Button>
+                        }
                     </Grid>
                     :
                     order.state === "READY FOR PICKUP" &&

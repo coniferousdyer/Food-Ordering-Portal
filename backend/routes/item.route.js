@@ -95,7 +95,7 @@ router.post("/add", auth, upload, async (req, res) => {
     }
 });
 
-router.patch("/edit", auth, async (req, res) => {
+router.patch("/edit", auth, upload, async (req, res) => {
     try {
         const item = await Item.findOne({
             vendor_id: req.user,
@@ -113,9 +113,9 @@ router.patch("/edit", auth, async (req, res) => {
             name: req.body.name
         });
 
-        if (duplicate_item) {
+        if (duplicate_item && req.body.original_name !== req.body.name) {
             return res.status(409).json({
-                error: "Item has already been added by this vendor",
+                error: "Item with same name has already been added by this vendor",
             });
         }
 

@@ -13,7 +13,7 @@ import { VictoryBar, VictoryChart, VictoryPie, VictoryTooltip } from "victory";
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import axios from 'axios';
-import { user_type } from '../../../lib/auth';
+import { user_is_authenticated, user_type } from '../../../lib/auth';
 
 
 const VendorStatistics = () => {
@@ -162,153 +162,194 @@ const VendorStatistics = () => {
     }
 
     return (
-        user_type() === 'vendor' &&
-        <div className="vendor-statistics">
-            <Grid container direction="column" spacing={4} alignItems="center">
-                <Grid item xs={12}>
-                    {matches ?
-                        <Typography className="registration-heading" variant="h3" component="h1">
-                            {entities.vendor.shop_name}'s Statistics
+        user_type() === 'vendor' ?
+            <div className="vendor-statistics">
+                <Grid container direction="column" spacing={4} alignItems="center">
+                    <Grid item xs={12}>
+                        {matches ?
+                            <Typography className="registration-heading" variant="h3" component="h1">
+                                {entities.vendor.shop_name}'s Statistics
+                            </Typography>
+                            :
+                            <Typography className="registration-heading" variant="h4" component="h1">
+                                {entities.vendor.shop_name}'s Statistics
+                            </Typography>
+                        }
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography variant="h5" component="h1">
+                            ORDER STATISTICS
                         </Typography>
-                        :
-                        <Typography className="registration-heading" variant="h4" component="h1">
-                            {entities.vendor.shop_name}'s Statistics
-                        </Typography>
-                    }
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        ORDER STATISTICS
-                    </Typography>
-                    <TableContainer component={Paper} style={{ marginTop: '1.5rem' }}>
-                        <Table aria-label="simple table">
-                            <TableBody>
-                                <TableRow
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        Orders Placed
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        {entities.orders.length}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        Pending Orders
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        {pendingOrders()}
-                                    </TableCell>
-                                </TableRow>
-                                <TableRow
-                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                                >
-                                    <TableCell component="th" scope="row">
-                                        Completed Orders
-                                    </TableCell>
-                                    <TableCell align="right">
-                                        {completedOrders()}
-                                    </TableCell>
-                                </TableRow>
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Grid>
-                <Grid item xs={12}>
-                    <Typography variant="h5" component="h1">
-                        TOP 5 ITEMS SOLD
-                    </Typography>
-                    <TableContainer component={Paper} style={{ marginTop: '1.5rem' }}>
-                        <Table aria-label="simple table">
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
-                                    <TableCell style={{ fontWeight: "bold" }} align="right">Number Sold</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {top5SoldItems().map((row) => (
+                        <TableContainer component={Paper} style={{ marginTop: '1.5rem' }}>
+                            <Table aria-label="simple table">
+                                <TableBody>
                                     <TableRow
-                                        key={row.name}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell component="th" scope="row">
-                                            {row.name}
+                                            Orders Placed
                                         </TableCell>
                                         <TableCell align="right">
-                                            {row.number_sold}
+                                            {entities.orders.length}
                                         </TableCell>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
-                </Grid>
-                <Grid item xs={12}>
-                    <Card className="batch-statistics">
-                        <CardContent>
-                            <Typography variant="h5" component="h1">
-                                BATCH-WISE STATISTICS
-                            </Typography>
-                            <Grid container direction="row" spacing={4}>
-                                <Grid item xs={6}>
-                                    <VictoryPie
-                                        data={batchStatistics()}
-                                        colorScale={["#00a1e4", "#fbc02d", "#8e24aa", "#d81b60", "#039be5"]}
-                                        labelComponent={<VictoryTooltip />}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <VictoryChart horizontal
-                                        domainPadding={{ x: 8 }}
+                                    <TableRow
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
-                                        <VictoryBar
+                                        <TableCell component="th" scope="row">
+                                            Pending Orders
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            {pendingOrders()}
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row">
+                                            Completed Orders
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            {completedOrders()}
+                                        </TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Typography variant="h5" component="h1">
+                            TOP 5 ITEMS SOLD
+                        </Typography>
+                        <TableContainer component={Paper} style={{ marginTop: '1.5rem' }}>
+                            <Table aria-label="simple table">
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>
+                                        <TableCell style={{ fontWeight: "bold" }} align="right">Number Sold</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {top5SoldItems().map((row) => (
+                                        <TableRow
+                                            key={row.name}
+                                            sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                        >
+                                            <TableCell component="th" scope="row">
+                                                {row.name}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {row.number_sold}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Card className="batch-statistics">
+                            <CardContent>
+                                <Typography variant="h5" component="h1">
+                                    BATCH-WISE STATISTICS
+                                </Typography>
+                                <Grid container direction="row" spacing={4}>
+                                    <Grid item xs={6}>
+                                        <VictoryPie
                                             data={batchStatistics()}
-                                            style={{
-                                                data: { fill: "#c43a31" }
-                                            }}
+                                            colorScale={["#00a1e4", "#fbc02d", "#8e24aa", "#d81b60", "#039be5"]}
+                                            labelComponent={<VictoryTooltip />}
                                         />
-                                    </VictoryChart>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <VictoryChart horizontal
+                                            domainPadding={{ x: 8 }}
+                                        >
+                                            <VictoryBar
+                                                data={batchStatistics()}
+                                                style={{
+                                                    data: { fill: "#c43a31" }
+                                                }}
+                                            />
+                                        </VictoryChart>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </CardContent>
-                    </Card>
-                </Grid>
-                <Grid item xs={12} style={{ marginBottom: "3rem" }}>
-                    <Card className="age-statistics">
-                        <CardContent>
-                            <Typography variant="h5" component="h1">
-                                AGE-WISE STATISTICS
-                            </Typography>
-                            <Grid container direction="row" spacing={4}>
-                                <Grid item xs={6}>
-                                    <VictoryPie
-                                        data={ageStatistics()}
-                                        colorScale={["#00a1e4", "#fbc02d", "#8e24aa", "#d81b60", "#039be5"]}
-                                        labelComponent={<VictoryTooltip />}
-                                    />
-                                </Grid>
-                                <Grid item xs={6}>
-                                    <VictoryChart horizontal
-                                        domainPadding={{ x: 8 }}
-                                    >
-                                        <VictoryBar
+                            </CardContent>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} style={{ marginBottom: "3rem" }}>
+                        <Card className="age-statistics">
+                            <CardContent>
+                                <Typography variant="h5" component="h1">
+                                    AGE-WISE STATISTICS
+                                </Typography>
+                                <Grid container direction="row" spacing={4}>
+                                    <Grid item xs={6}>
+                                        <VictoryPie
                                             data={ageStatistics()}
-                                            style={{
-                                                data: { fill: "#c43a31" }
-                                            }}
+                                            colorScale={["#00a1e4", "#fbc02d", "#8e24aa", "#d81b60", "#039be5"]}
+                                            labelComponent={<VictoryTooltip />}
                                         />
-                                    </VictoryChart>
+                                    </Grid>
+                                    <Grid item xs={6}>
+                                        <VictoryChart horizontal
+                                            domainPadding={{ x: 8 }}
+                                        >
+                                            <VictoryBar
+                                                data={ageStatistics()}
+                                                style={{
+                                                    data: { fill: "#c43a31" }
+                                                }}
+                                            />
+                                        </VictoryChart>
+                                    </Grid>
                                 </Grid>
-                            </Grid>
-                        </CardContent>
-                    </Card>
+                            </CardContent>
+                        </Card>
+                    </Grid>
                 </Grid>
-            </Grid>
-        </div>
+            </div>
+            :
+            matches ?
+                user_is_authenticated() ?
+                    <div className="welcome-page">
+                        <Typography className="welcome-heading" variant="h2" component="h1">
+                            This route is not accessible by buyers
+                        </Typography>
+                        <Typography variant="h6" component="h1">
+                            Please login through a vendor account to continue
+                        </Typography>
+                    </div>
+                    :
+                    <div className="welcome-page">
+                        <Typography className="welcome-heading" variant="h2" component="h1">
+                            You are not logged in
+                        </Typography>
+                        <Typography variant="h6" component="h1">
+                            Please login or register to continue
+                        </Typography>
+                    </div>
+                :
+
+                user_is_authenticated() ?
+                    <div className="welcome-page">
+                        <Typography className="welcome-heading" variant="h4" component="h1">
+                            This route is not accessible by vendors
+                        </Typography>
+                        <Typography variant="h6" component="h1">
+                            Please login through a buyer account to continue
+                        </Typography>
+                    </div>
+                    :
+
+                    <div className="welcome-page">
+                        <Typography className="welcome-heading" variant="h4" component="h1">
+                            You are not logged in
+                        </Typography>
+                        <Typography variant="h6" component="h1">
+                            Please login or register to continue
+                        </Typography>
+                    </div>
     );
 };
 

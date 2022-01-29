@@ -135,7 +135,20 @@ const ItemChange = ({ item, onEdit, onDelete }) => {
                 title: 'Error',
                 text: 'Please fill all the details and/or fix errors!!',
                 icon: 'error',
-                confirmButtonText: 'Ok'
+                confirmButtonText: 'OK'
+            });
+
+            return;
+        }
+
+        // Checking price limit
+        if (itemDetails.price > 200) {
+            handleDialogClose();
+            Swal.fire({
+                title: 'Error',
+                text: 'Price cannot be more than 200!',
+                icon: 'error',
+                confirmButtonText: 'OK'
             });
 
             return;
@@ -152,14 +165,14 @@ const ItemChange = ({ item, onEdit, onDelete }) => {
         formData.append('category', itemDetails.category);
         formData.append('tags', itemDetails.tags);
         formData.append('addons', addonsString);
+        formData.append('image', itemDetails.image);
 
-        axios
-            .patch(`http://localhost:5000/api/items/edit`, formData, {
-                headers: {
-                    authorization: localStorage.getItem("token"),
-                    'Content-Type': 'multipart/form-data',
-                }
-            })
+        axios.patch('http://localhost:5000/api/items/edit', formData, {
+            headers: {
+                authorization: localStorage.getItem("token"),
+                'Content-Type': 'multipart/form-data'
+            }
+        })
             .then(res => {
                 Swal.fire({
                     title: `${item.name} Edited`,

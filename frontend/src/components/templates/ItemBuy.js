@@ -43,11 +43,11 @@ const ItemBuy = ({ item, vendor }) => {
 
     // Calculate total price
     const calculateTotalPrice = () => {
-        let total = item.price;
+        let total = quantity * item.price;
         selectedAddons.forEach(addon => {
             total += item.addons.find(i => i.addon_name === addon).addon_price;
         });
-        return quantity * total;
+        return total;
     }
 
     // Verify if vendor has not closed
