@@ -13,6 +13,7 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Wallet from "../../templates/Wallet";
 import BuyerFavourites from "./BuyerFavourites";
+import fuzzy from "fuzzy";
 
 
 const BuyerDashboard = () => {
@@ -51,7 +52,7 @@ const BuyerDashboard = () => {
     // Check if item passes filter
     const passesFilter = item => {
         // Search filter
-        if (!(filter.search === '' || item.name.toLowerCase().includes(filter.search.toLowerCase())))
+        if (!(filter.search === '' || fuzzy.test(filter.search, item.name.toLowerCase())))
             return false;
 
         // Vegetarian filter

@@ -4,9 +4,20 @@ const router = express.Router();
 
 // Load models and auth middleware
 const Order = require("../models/order.model");
+const Vendor = require("../models/vendor.model");
 const Buyer = require("../models/buyer.model");
 const Item = require("../models/item.model");
 const auth = require("../middleware/auth");
+const nodemailer = require("nodemailer");
+
+// Setting up nodemailer
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: process.env.SENDER_EMAIL,
+        pass: process.env.SENDER_PASSWORD
+    }
+});
 
 // Get all the orders
 router.get("/", auth, async (req, res) => {
@@ -68,7 +79,7 @@ router.post("/add", auth, async (req, res) => {
                 error: "Item not found",
             });
         }
-        
+
         // Deduct the amount from the buyer's wallet
         const buyer = await Buyer.findById(req.user);
         if (buyer.wallet < req.body.cost) {
@@ -146,6 +157,24 @@ router.patch("/reject", auth, async (req, res) => {
             new: true
         });
 
+        const vendor = await Vendor.findById(req.user);
+
+        // Send email to the vendor
+        const mailOptions = {
+            from: process.env.SENDER_EMAIL,
+            to: updated_buyer.email,
+            subject: "Order Rejected",
+            text: vendor.shop_name + " rejected your order!"
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("Email sent: " + info.response);
+            }
+        });
+
         return res.status(200).json({
             order: order,
             buyer: updated_buyer,
@@ -203,10 +232,32 @@ router.patch("/update_state", auth, async (req, res) => {
             new: true
         });
 
+        const buyer = await Buyer.findById(order.buyer_id);
+        const vendor = await Vendor.findById(req.user);
+
+        // Send email to the vendor
+        if (new_state === "ACCEPTED") {
+            const mailOptions = {
+                from: process.env.SENDER_EMAIL,
+                to: buyer.email,
+                subject: "Order Accepted",
+                text: vendor.shop_name + " accepted your order!"
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log("Email sent: " + info.response);
+                }
+            });
+        }
+
         return res.status(200).json({
             order: updated_order,
         });
     } catch (err) {
+        console.log(err);
         return res.status(500).json({
             error: err
         });
