@@ -1,63 +1,77 @@
-# MERN Stack Boilerplate
+# Food Ordering Portal
 
-## Installations
+<p align="center">
+<img src="images/preview_1.png">
+</p>
 
-### Node
+The Food Ordering Portal is a web application built using the MERN stack that allows:
 
-* For Linux:
+<b>Customers</b>
+
+* to order food items from a list of available items sold by vendors
+* to view, manage and edit personal profiles
+* to view status of orders placed by them and pick up orders from vendors
+
+<b>Vendors</b>
+
+* to put food items up for sale, where they can be ordered by customers
+* to view, manage and edit personal profiles
+* to view and manage orders placed by customers and update their status as the orders progress
+* view statistics and distribution of orders placed by customers and sales completed by them
+
+The Food Ordering Portal supports two types of accounts: vendors and customers.
+
+## Features
+
+* User authentication and authorization using JWT.
+* Fuzzy search for food items
+* Filtering and sorting food items based on various attributes
+* Email confirmation for acceptance/rejection of orders
+* Adding and removing favourite food items
+
+## Requirements
+
+* Node.js
+* Express.js
+* MongoDB
+* React.js
+
+## Setup
+
+1. Clone the repository.
+
+2. Change directory to the root of the repository.
+```bash
+cd Food-Ordering-Portal
 ```
-curl -sL https://deb.nodesource.com/setup_13.x | sudo -E bash -
-sudo apt-get install -y nodejs
-```
 
-* For Mac:
-```
-brew install node
-```
+### Backend
 
-### MongoDB
-
-Install the community edition [here](https://docs.mongodb.com/manual/installation/#mongodb-community-edition-installation-tutorials).
-
-
-### React
-
-```
-npm install -g create-react-app
-```
-
-* To create a new React app:
-```
-create-react-app name_of_app
-```
-
-* To run the app, cd into the directory and do:
-```
-npm start
-```
-
-## Running the boilerplate
-
-* Run Mongo daemon:
-```
-sudo mongod
-```
-Mongo will be running on port 27017.
-
-
-* Run Express Backend:
-```
-cd backend/
+1. From the cloned directory, run `cd backend` and run the following commands:
+```bash
 npm install
+cp .env.template .env
+```
+
+2. Fill in the details in the newly created `.env` file, and save it. This is an essential step, as it contains the credentials for the database.
+
+3. Then start the backend using the following command:
+```bash
 npm start
 ```
 
-* Run React Frontend:
+The backend will start on port 5000.
+
+### Frontend
+
+1. From the cloned directory, run `cd frontend` and run the following commands:
+```bash
+npm install
 ```
-cd frontend
-npm install/
+
+2. Start the frontend using the following command:
+```bash
 npm start
 ```
 
-Navigate to [http://localhost:3000/](http://localhost:3000/) in your browser.
-
+The frontend will start on port 3000. Head over to http://localhost:3000 to view the application.

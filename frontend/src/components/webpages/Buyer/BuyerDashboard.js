@@ -52,7 +52,7 @@ const BuyerDashboard = () => {
     // Check if item passes filter
     const passesFilter = item => {
         // Search filter
-        if (!(filter.search === '' || fuzzy.test(filter.search, item.name.toLowerCase())))
+        if (!(filter.search === '' || fuzzy.test(filter.search.toLowerCase(), item.name.toLowerCase())))
             return false;
 
         // Vegetarian filter
