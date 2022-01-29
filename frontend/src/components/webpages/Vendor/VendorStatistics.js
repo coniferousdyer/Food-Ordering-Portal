@@ -88,31 +88,31 @@ const VendorStatistics = () => {
 
     // Obtain top 5 sold items
     const top5SoldItems = () => {
-        let items = [];
+        let itemCount = {};
         entities.orders.forEach(order => {
             if (order.state === 'COMPLETED') {
-                items.push(order.item_id);
+                const item = entities.items.find(item => item._id === order.item_id);
+                if (itemCount[item.name]) {
+                    itemCount[item.name] += order.quantity;
+                } else {
+                    itemCount[item.name] = order.quantity;
+                }
             }
         });
 
-        let itemCount = {};
-        items.forEach(item => {
-            if (itemCount[item]) {
-                itemCount[item]++;
-            } else {
-                itemCount[item] = 1;
-            }
-        });
-
-        let sortedItems = Object.keys(itemCount).sort((a, b) => itemCount[b] - itemCount[a]);
         let top5 = [];
-        for (let i = 0; i < 5; i++) {
-            if (!entities.items.find(item => item._id === sortedItems[i]))
-                return top5;
-            top5.push(entities.items.find(item => item._id === sortedItems[i]));
+        for (let item in itemCount) {
+            top5.push({
+                item_name: item,
+                count: itemCount[item]
+            });
         }
 
-        return top5;
+        top5.sort((a, b) => {
+            return b.count - a.count;
+        });
+
+        return top5.slice(0, 5);
     }
 
     // Obtain batch-wise statistics
@@ -133,8 +133,6 @@ const VendorStatistics = () => {
                 }
             }
         });
-
-        console.log(batches);
 
         return batches;
     }
@@ -232,14 +230,14 @@ const VendorStatistics = () => {
                                 <TableBody>
                                     {top5SoldItems().map((row) => (
                                         <TableRow
-                                            key={row.name}
+                                            key={row.item_name}
                                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                         >
                                             <TableCell component="th" scope="row">
-                                                {row.name}
+                                                {row.item_name}
                                             </TableCell>
                                             <TableCell align="right">
-                                                {row.number_sold}
+                                                {row.count}
                                             </TableCell>
                                         </TableRow>
                                     ))}

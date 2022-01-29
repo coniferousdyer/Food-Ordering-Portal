@@ -115,7 +115,7 @@ const BuyerProfile = () => {
                 title: 'Error',
                 text: 'Please fill all the details and/or fix errors!!',
                 icon: 'error',
-                confirmButtonText: 'Ok'
+                confirmButtonText: 'OK'
             });
 
             return false;

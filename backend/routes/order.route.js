@@ -127,7 +127,7 @@ router.patch("/reject", auth, async (req, res) => {
         // Refund the buyer's wallet
         const buyer = await Buyer.findById(req.body.buyer_id);
         const new_wallet_amount = buyer.wallet + order.cost;
-        const updated_buyer = await Buyer.findByIdAndUpdate(req.user, {
+        const updated_buyer = await Buyer.findByIdAndUpdate(req.body.buyer_id, {
             $set: {
                 wallet: new_wallet_amount
             }
@@ -183,11 +183,11 @@ router.patch("/update_state", auth, async (req, res) => {
 
         const all_orders = await Order.find({});
         const filtered_orders = all_orders.filter(order => {
-            order.state == "ACCEPTED" || order.state == "COOKING"
+            return order.state == "ACCEPTED" || order.state == "COOKING"
         });
 
         // Reject if there are 10 orders in progress
-        if (filtered_orders.length >= 10) {
+        if (filtered_orders.length >= 10 && order.state == "PLACED") {
             return res.status(403).json({
                 error: "Other orders still in progress"
             });
