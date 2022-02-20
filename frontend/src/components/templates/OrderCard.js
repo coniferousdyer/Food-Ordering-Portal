@@ -21,7 +21,7 @@ const OrderCard = ({ buyer, order, item, vendor, entities, setEntities }) => {
     // Handle rating change
     const handleRatingChange = value => {
         axios
-            .patch(`http://localhost:5000/api/items/update_rating`, {
+            .patch(`/api/items/update_rating`, {
                 item_id: item._id,
                 order_id: order._id,
                 rating: value
@@ -59,7 +59,7 @@ const OrderCard = ({ buyer, order, item, vendor, entities, setEntities }) => {
     // Handle order status change
     const handleStatusUpdate = () => {
         axios
-            .patch(`http://localhost:5000/api/orders/update_state`, {
+            .patch(`/api/orders/update_state`, {
                 order_id: order._id,
             }, {
                 headers: {
@@ -93,7 +93,7 @@ const OrderCard = ({ buyer, order, item, vendor, entities, setEntities }) => {
     // Handle order rejection
     const handleRejection = () => {
         axios
-            .patch(`http://localhost:5000/api/orders/reject`, {
+            .patch(`/api/orders/reject`, {
                 order_id: order._id,
                 buyer_id: buyer._id,
             }, {

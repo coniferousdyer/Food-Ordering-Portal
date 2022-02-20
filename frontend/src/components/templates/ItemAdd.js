@@ -116,7 +116,7 @@ const ItemAdd = ({ onAdd }) => {
         formData.append('addons', addonsString);
         formData.append('image', itemDetails.image);
 
-        axios.post('http://localhost:5000/api/items/add', formData, {
+        axios.post('/api/items/add', formData, {
             headers: {
                 authorization: localStorage.getItem("token"),
                 'Content-Type': 'multipart/form-data'

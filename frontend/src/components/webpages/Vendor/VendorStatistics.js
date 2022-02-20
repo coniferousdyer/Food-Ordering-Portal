@@ -29,22 +29,22 @@ const VendorStatistics = () => {
     useEffect(() => {
         if (user_type() === 'vendor') {
             async function fetchData() {
-                const response_1 = await axios.get('http://localhost:5000/api/orders/vendor', {
+                const response_1 = await axios.get('/api/orders/vendor', {
                     headers: {
                         authorization: localStorage.getItem('token')
                     }
                 });
-                const response_2 = await axios.get('http://localhost:5000/api/items', {
+                const response_2 = await axios.get('/api/items', {
                     headers: {
                         authorization: localStorage.getItem('token')
                     }
                 });
-                const response_3 = await axios.get('http://localhost:5000/api/vendors/details', {
+                const response_3 = await axios.get('/api/vendors/details', {
                     headers: {
                         authorization: localStorage.getItem('token')
                     }
                 });
-                const response_4 = await axios.get('http://localhost:5000/api/buyers', {
+                const response_4 = await axios.get('/api/buyers', {
                     headers: {
                         authorization: localStorage.getItem('token')
                     }

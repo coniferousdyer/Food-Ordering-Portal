@@ -19,7 +19,7 @@ const Wallet = () => {
     const matches = useMediaQuery('(min-width:480px)');
 
     useEffect(() => {
-        axios.get("http://localhost:5000/api/buyers/details", {
+        axios.get("/api/buyers/details", {
             headers: {
                 authorization: localStorage.getItem("token"),
             },
@@ -45,7 +45,7 @@ const Wallet = () => {
             return;
         }
 
-        axios.patch("http://localhost:5000/api/buyers/update_wallet", {
+        axios.patch("/api/buyers/update_wallet", {
             wallet: amount,
         }, {
             headers: {

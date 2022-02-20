@@ -55,9 +55,9 @@ const Login = () => {
 
         let url = ""
         if (userType === 'buyer')
-            url = 'http://localhost:5000/api/buyers/login'
+            url = '/api/buyers/login'
         else
-            url = 'http://localhost:5000/api/vendors/login'
+            url = '/api/vendors/login'
 
         // Send POST request to backend
         axios.post(url, {

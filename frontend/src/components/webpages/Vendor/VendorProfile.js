@@ -72,7 +72,7 @@ const VendorProfile = () => {
 
     useEffect(() => {
         if (user_is_authenticated()) {
-            axios.get('http://localhost:5000/api/vendors/details', {
+            axios.get('/api/vendors/details', {
                 headers: {
                     'authorization': localStorage.getItem('token')
                 }
@@ -143,7 +143,7 @@ const VendorProfile = () => {
             return;
 
         setDialogOpen(false);
-        axios.patch('http://localhost:5000/api/vendors/edit', {
+        axios.patch('/api/vendors/edit', {
             shop_name: userDetails.shop_name,
             manager_name: userDetails.manager_name,
             email: userDetails.email,

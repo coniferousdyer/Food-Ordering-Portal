@@ -1,0 +1,40 @@
+version: "3.5"
+services:
+  backend:
+    container_name: food-ordering-portal-backend
+    build: ./backend
+    env_file:
+      - ./backend/.env
+    restart: always
+    links:
+      - mongo
+  frontend:
+    container_name: food-ordering-portal-frontend
+    build: ./frontend
+    depends_on:
+      - backend
+    restart: always
+  mongo:
+    container_name: mongo
+    image: mongo:5.0.5
+    restart: always
+    # Creating a "mongodata" volume so that mongo data is persisted
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - "27017:27017"
+  nginx:
+    container_name: nginx
+    image: nginx:1.18.0
+    depends_on:
+      - frontend
+      - backend
+      - mongo
+    restart: always
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+
+volumes:
+  mongodata:

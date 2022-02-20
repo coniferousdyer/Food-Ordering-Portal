@@ -12,7 +12,7 @@ const VendorDashboard = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000/api/items/vendor", {
+      .get("/api/items/vendor", {
         headers: {
           authorization: localStorage.getItem("token")
         }

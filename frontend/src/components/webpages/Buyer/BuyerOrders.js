@@ -17,17 +17,17 @@ const BuyerOrders = () => {
 
     useEffect(() => {
         async function fetchData() {
-            const response_1 = await axios.get('http://localhost:5000/api/orders/buyer', {
+            const response_1 = await axios.get('/api/orders/buyer', {
                 headers: {
                     authorization: localStorage.getItem('token')
                 }
             });
-            const response_2 = await axios.get('http://localhost:5000/api/items', {
+            const response_2 = await axios.get('/api/items', {
                 headers: {
                     authorization: localStorage.getItem('token')
                 }
             });
-            const response_3 = await axios.get('http://localhost:5000/api/vendors', {
+            const response_3 = await axios.get('/api/vendors', {
                 headers: {
                     authorization: localStorage.getItem('token')
                 }

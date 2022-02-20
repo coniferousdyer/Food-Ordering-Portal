@@ -31,7 +31,7 @@ const BuyerFavourites = () => {
     const handleFavouriteRemove = item => {
         toggleFavourites(false);
         axios
-            .patch(`http://localhost:5000/api/buyers/remove_favourite`, {
+            .patch(`/api/buyers/remove_favourite`, {
                 item_id: item._id
             }, {
                 headers: {
@@ -62,17 +62,17 @@ const BuyerFavourites = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const response_1 = await axios.get('http://localhost:5000/api/items', {
+            const response_1 = await axios.get('/api/items', {
                 headers: {
                     authorization: localStorage.getItem("token"),
                 },
             });
-            const response_2 = await axios.get('http://localhost:5000/api/buyers/details', {
+            const response_2 = await axios.get('/api/buyers/details', {
                 headers: {
                     authorization: localStorage.getItem("token"),
                 },
             });
-            const response_3 = await axios.get('http://localhost:5000/api/vendors', {
+            const response_3 = await axios.get('/api/vendors', {
                 headers: {
                     authorization: localStorage.getItem("token"),
                 },

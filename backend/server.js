@@ -20,10 +20,10 @@ app.use(express.urlencoded({ extended: true }))
 app.use('/public/images', express.static(__dirname + '/public/images/'));
 
 // Setup API endpoints
-app.use("/api/buyers", require("./routes/buyer.route"));
-app.use("/api/vendors", require("./routes/vendor.route"));
-app.use("/api/items", require("./routes/item.route"));
-app.use("/api/orders", require("./routes/order.route"));
+app.use("/buyers", require("./routes/buyer.route"));
+app.use("/vendors", require("./routes/vendor.route"));
+app.use("/items", require("./routes/item.route"));
+app.use("/orders", require("./routes/order.route"));
 
 // Connection to MongoDB
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }, err => {

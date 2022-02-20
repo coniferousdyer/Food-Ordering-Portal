@@ -88,7 +88,7 @@ const ItemChange = ({ item, onEdit, onDelete }) => {
         }).then((result) => {
             if (result.value) {
                 axios
-                    .delete(`http://localhost:5000/api/items/delete`, {
+                    .delete(`/api/items/delete`, {
                         headers: {
                             authorization: localStorage.getItem("token"),
                         },
@@ -167,7 +167,7 @@ const ItemChange = ({ item, onEdit, onDelete }) => {
         formData.append('addons', addonsString);
         formData.append('image', itemDetails.image);
 
-        axios.patch('http://localhost:5000/api/items/edit', formData, {
+        axios.patch('/api/items/edit', formData, {
             headers: {
                 authorization: localStorage.getItem("token"),
                 'Content-Type': 'multipart/form-data'

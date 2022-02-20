@@ -71,7 +71,7 @@ const BuyerProfile = () => {
 
     useEffect(() => {
         if (user_is_authenticated()) {
-            axios.get('http://localhost:5000/api/buyers/details', {
+            axios.get('/api/buyers/details', {
                 headers: {
                     'authorization': localStorage.getItem('token')
                 }
@@ -132,7 +132,7 @@ const BuyerProfile = () => {
             return;
 
         setDialogOpen(false);
-        axios.patch('http://localhost:5000/api/buyers/edit', {
+        axios.patch('/api/buyers/edit', {
             name: userDetails.name,
             email: userDetails.email,
             age: userDetails.age,

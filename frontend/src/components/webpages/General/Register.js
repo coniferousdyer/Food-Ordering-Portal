@@ -91,7 +91,7 @@ const Register = () => {
             };
 
             // Send POST request to backend
-            axios.post('http://localhost:5000/api/buyers/register', buyer)
+            axios.post('/api/buyers/register', buyer)
                 .then(res => {
                     // Set tokens in local storage
                     localStorage.setItem('token', res.data.token);
@@ -125,7 +125,7 @@ const Register = () => {
             };
 
             // Send POST request to backend
-            axios.post('http://localhost:5000/api/vendors/register', vendor)
+            axios.post('/api/vendors/register', vendor)
                 .then(res => {
                     // Set tokens in local storage
                     localStorage.setItem('token', res.data.token);
