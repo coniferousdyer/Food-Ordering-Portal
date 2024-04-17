@@ -36,49 +36,7 @@ The Food Ordering Portal supports two types of accounts: vendors and customers.
 * MongoDB
 * React.js
 
-## Setup
-
-1. Clone the repository.
-
-2. Change directory to the root of the repository.
-```bash
-cd Food-Ordering-Portal
-```
-
-### I. No-Docker Setup
-
-#### Backend
-
-1. From the cloned directory, run `cd backend` and run the following commands:
-```bash
-npm install
-cp .env.template .env
-```
-
-2. Fill in the details in the newly created `.env` file, and save it. This is an essential step, as it contains the credentials for the database.
-
-3. Then start the backend using the following command:
-```bash
-npm start
-```
-
-The backend will start on port 5000.
-
-#### Frontend
-
-1. From the cloned directory, run `cd frontend` and run the following commands:
-```bash
-npm install
-```
-
-2. Start the frontend using the following command:
-```bash
-npm start
-```
-
-The frontend will start on port 3000. Head over to http://localhost:3000 to view the application.
-
-### II. Docker Setup
+## Setup (Using Docker)
 
 1. From the cloned directory, run `cd backend` and run the following command:
 ```bash
