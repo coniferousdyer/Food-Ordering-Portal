@@ -47,7 +47,6 @@ cp .env.template .env
 
 3. Now, all you need to do is run the following command from the root of the cloned directory:
 ```bash
-cd ..
 docker-compose up -d
 ```
 The application will now be running on http://localhost:80.
